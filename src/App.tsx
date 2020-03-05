@@ -19,7 +19,6 @@ const App = (props: Props) => {
           locale={props.language ? props.language : LOCALES.FINNISH}
         >
           <CssBaseline />
-
           <div className="App">
             <Header />
           </div>
