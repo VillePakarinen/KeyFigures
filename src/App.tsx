@@ -1,30 +1,26 @@
 import React from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import CssBaseline from "@material-ui/core/CssBaseline";
 
-function App() {
+import Header from "./components/header/Header";
+import I18nProvider from "./i18n/i18nProvider";
+import { LOCALES } from "./i18n/locales";
+
+interface Props {
+  language?: string;
+}
+
+const App = (props: Props) => {
   return (
     <>
-      <CssBaseline />
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.tsx</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
+      <I18nProvider locale={props.language ? props.language : LOCALES.FINNISH}>
+        <CssBaseline />
+        <div className="App">
+          <Header />
+        </div>
+      </I18nProvider>
     </>
   );
-}
+};
 
 export default App;
