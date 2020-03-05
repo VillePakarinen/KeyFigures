@@ -5,7 +5,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Header from "./components/header/Header";
 import I18nProvider from "./i18n/i18nProvider";
 import { LOCALES } from "./i18n/locales";
-import ErrorBoundary from "./errorBoundary/ErrorBoundary";
+import ErrorBoundary from "./components/errorBoundary/ErrorBoundary";
 
 interface Props {
   language?: string;
