@@ -16,7 +16,7 @@ const I18nProvider: React.FC<Props> = ({ locale, children }) => {
   if (!localeProvided) {
     const localeString = Object.values(LOCALES).join(", ");
     throw new Error(
-      "Locale not provided to the application. Try passing proper language to App component: " +
+      "Improper locale provided to the application. Try passing one of these languages to App component: " +
         localeString
     );
   }

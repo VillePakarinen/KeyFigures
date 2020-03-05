@@ -2,6 +2,7 @@ import { LOCALES } from "./../locales";
 
 export default {
   [LOCALES.SWEDISH]: {
-    "app-name": "kommunala nyckeltal"
+    "app-name": "Kommunala nyckeltal",
+    "app-general-error": "Något gick fel"
   }
 };
