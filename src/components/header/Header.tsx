@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FormattedMessage } from "react-intl";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -8,8 +8,12 @@ import {
   makeStyles,
   Theme,
   createStyles,
-  FormHelperText
+  FormHelperText,
+  LinearProgress
 } from "@material-ui/core";
+import useAxios from "axios-hooks";
+import { RegionalZoneDto } from "./model/regionalZoneDto";
+import { MunicipalitiesDto, Municipality } from "./model/municipalitiesDto";
 
 interface Props {}
 
@@ -30,16 +34,89 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const Header: React.FC<Props> = props => {
   const classes = useStyles();
+  const [
+    selectedRegionalZone,
+    setRegionalZone
+  ] = useState<RegionalZoneDto | null>();
 
-  const [regionalZone, setRegionalZone] = useState("");
+  const [selectedPrimaryMunicipality, setPrimaryMunicipality] = useState<
+    Municipality | undefined
+  >(undefined);
+  const [selectedSecondaryMunicipality, setSecondaryMunicipality] = useState<
+    Municipality | undefined
+  >(undefined);
 
-  const handleChange = (
+  const [regionalResponse] = useAxios<RegionalZoneDto[]>({
+    method: "GET",
+    url: "https://pxnet2.stat.fi/PXWeb/api/v1/fi/Kuntien_avainluvut/"
+  });
+
+  const [municipalityResponse, getMunicipalities] = useAxios<Municipality[]>(
+    {
+      method: "GET",
+      transformResponse: (body: string) => {
+        const response = JSON.parse(body) as MunicipalitiesDto;
+        const municipalities = response.variables[0];
+
+        if (municipalities.values.length !== municipalities.valueTexts.length) {
+          throw new Error("bad respone from the server.");
+        }
+
+        return municipalities.values.map((id, index) => {
+          return new Municipality(id, municipalities.valueTexts[index]);
+        });
+      }
+    },
+    { manual: true }
+  );
+
+  useEffect(() => {
+    if (regionalResponse.data) {
+      const sortedByYear = regionalResponse.data.sort((a, b) => {
+        return +b.id - +a.id;
+      });
+      setRegionalZone(sortedByYear[0]);
+    }
+  }, [regionalResponse]);
+
+  useEffect(() => {
+    if (selectedRegionalZone) {
+      getMunicipalities({
+        url: `https://pxnet2.stat.fi/PXWeb/api/v1/fi/Kuntien_avainluvut/${selectedRegionalZone.id}/kuntien_avainluvut_${selectedRegionalZone.id}_viimeisin.px`,
+        headers: { "Content-Type": "application/x-www-form-urlencoded" }
+      });
+    }
+  }, [selectedRegionalZone, getMunicipalities]);
+
+  const handleChangeZoneChange = (
     event: React.ChangeEvent<{
       name?: string | undefined;
       value: unknown;
     }>
   ) => {
-    setRegionalZone(event.target.value as string);
+    console.log("called " + event.target.value);
+    const selectedZone = regionalResponse?.data?.find(
+      zone => zone.id === (event.target.value as string)
+    );
+    setRegionalZone(selectedZone);
+  };
+
+  const handlePrimaryMunicipalityChange = (
+    event: React.ChangeEvent<{
+      name?: string | undefined;
+      value: unknown;
+    }>
+  ) => {
+    console.log("called " + event.target.value);
+  };
+
+  const handleSecondaryMunicipalityChange = (
+    event: React.ChangeEvent<{
+      name?: string | undefined;
+      value: unknown;
+    }>
+  ) => {
+    console.log("called " + event.target.value);
   };
 
   return (
@@ -53,7 +130,11 @@ const Header: React.FC<Props> = props => {
             />
           </h1>
           <FormControl className={classes.formControl}>
-            <InputLabel id="regional-zone-label" htmlFor="regional-zone-select">
+            <InputLabel
+              id="regional-zone-label"
+              htmlFor="regional-zone-select"
+              shrink
+            >
               <FormattedMessage
                 id="regional-time-period"
                 defaultMessage="Aluejako"
@@ -62,11 +143,17 @@ const Header: React.FC<Props> = props => {
             <Select
               native
               id="regional-zone-select"
-              value={regionalZone}
-              onChange={handleChange}
+              value={selectedRegionalZone?.id}
+              onChange={handleChangeZoneChange}
+              disabled={regionalResponse.loading ? true : false}
             >
-              <option value="2020">2020</option>
-              <option value="2019">2019</option>
+              {regionalResponse.data?.map((zone, index) => {
+                return (
+                  <option key={index} value={zone.id}>
+                    {zone.text}
+                  </option>
+                );
+              })}
             </Select>
             <FormHelperText>
               <FormattedMessage
@@ -78,7 +165,11 @@ const Header: React.FC<Props> = props => {
         </Grid>
         <Grid item xs={6}>
           <FormControl className={classes.formControl}>
-            <InputLabel id="primary-zone-label" htmlFor="primary-zone-select">
+            <InputLabel
+              id="primary-zone-label"
+              htmlFor="primary-zone-select"
+              shrink
+            >
               <FormattedMessage
                 id="primary-region"
                 defaultMessage="Ensisijainen alue"
@@ -87,11 +178,21 @@ const Header: React.FC<Props> = props => {
             <Select
               native
               id="primary-zone-select"
-              value={function() {}}
-              onChange={function() {}}
+              value={selectedPrimaryMunicipality}
+              onChange={handlePrimaryMunicipalityChange}
+              disabled={
+                regionalResponse.loading || municipalityResponse.loading
+                  ? true
+                  : false
+              }
             >
-              <option value="SSS">Koko maa</option>
-              <option value="010">Akaa</option>
+              {municipalityResponse.data?.map((municipality, index) => {
+                return (
+                  <option key={index} value={municipality.id}>
+                    {municipality.name}
+                  </option>
+                );
+              })}
             </Select>
             <FormHelperText>
               <FormattedMessage
@@ -106,6 +207,7 @@ const Header: React.FC<Props> = props => {
             <InputLabel
               id="secondary-zone-label"
               htmlFor="secondary-zone-select"
+              shrink
             >
               <FormattedMessage
                 id="secondary-region"
@@ -115,11 +217,22 @@ const Header: React.FC<Props> = props => {
             <Select
               native
               id="secondary-zone-select"
-              value={function() {}}
-              onChange={function() {}}
+              value={selectedSecondaryMunicipality}
+              onChange={handleSecondaryMunicipalityChange}
+              disabled={
+                regionalResponse.loading || municipalityResponse.loading
+                  ? true
+                  : false
+              }
             >
-              <option value="SSS">Koko maa</option>
-              <option value="010">Akaa</option>
+              <option value={undefined}></option>
+              {municipalityResponse.data?.map((municipality, index) => {
+                return (
+                  <option key={index} value={municipality.id}>
+                    {municipality.name}
+                  </option>
+                );
+              })}
             </Select>
             <FormHelperText>
               <FormattedMessage
@@ -130,6 +243,9 @@ const Header: React.FC<Props> = props => {
           </FormControl>
         </Grid>
       </Grid>
+      {municipalityResponse.loading || regionalResponse.loading ? (
+        <LinearProgress />
+      ) : null}
     </section>
   );
 };
