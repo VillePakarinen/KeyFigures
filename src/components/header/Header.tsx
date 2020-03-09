@@ -12,8 +12,10 @@ import {
   LinearProgress
 } from "@material-ui/core";
 import useAxios from "axios-hooks";
+
 import { RegionalZoneDto } from "./model/regionalZoneDto";
 import { MunicipalitiesDto, Municipality } from "./model/municipalitiesDto";
+import KeyFigureTable from "../keyFiguresTable/KeyFigureTable";
 
 interface Props {}
 
@@ -81,10 +83,17 @@ const Header: React.FC<Props> = props => {
 
   useEffect(() => {
     if (selectedRegionalZone) {
-      getMunicipalities({
-        url: `https://pxnet2.stat.fi/PXWeb/api/v1/fi/Kuntien_avainluvut/${selectedRegionalZone.id}/kuntien_avainluvut_${selectedRegionalZone.id}_viimeisin.px`,
-        headers: { "Content-Type": "application/x-www-form-urlencoded" }
-      });
+      const triggerFetch = async () => {
+        const result = await getMunicipalities({
+          url: `https://pxnet2.stat.fi/PXWeb/api/v1/fi/Kuntien_avainluvut/${selectedRegionalZone.id}/kuntien_avainluvut_${selectedRegionalZone.id}_viimeisin.px`,
+          headers: { "Content-Type": "application/x-www-form-urlencoded" }
+        });
+
+        // Set preselected value for dropdown
+        setPrimaryMunicipality(result.data[0]);
+      };
+
+      triggerFetch();
     }
   }, [selectedRegionalZone, getMunicipalities]);
 
@@ -94,7 +103,6 @@ const Header: React.FC<Props> = props => {
       value: unknown;
     }>
   ) => {
-    console.log("called " + event.target.value);
     const selectedZone = regionalResponse?.data?.find(
       zone => zone.id === (event.target.value as string)
     );
@@ -108,6 +116,10 @@ const Header: React.FC<Props> = props => {
     }>
   ) => {
     console.log("called " + event.target.value);
+    const selectedMunicipality = municipalityResponse?.data?.find(
+      municipality => municipality.id === (event.target.value as string)
+    );
+    setPrimaryMunicipality(selectedMunicipality);
   };
 
   const handleSecondaryMunicipalityChange = (
@@ -117,6 +129,10 @@ const Header: React.FC<Props> = props => {
     }>
   ) => {
     console.log("called " + event.target.value);
+    const selectedMunicipality = municipalityResponse?.data?.find(
+      municipality => municipality.id === (event.target.value as string)
+    );
+    setSecondaryMunicipality(selectedMunicipality);
   };
 
   return (
@@ -246,6 +262,12 @@ const Header: React.FC<Props> = props => {
       {municipalityResponse.loading || regionalResponse.loading ? (
         <LinearProgress />
       ) : null}
+
+      <h2>Avainluvut</h2>
+      <KeyFigureTable
+        primaryMunicipality={selectedPrimaryMunicipality}
+        secondaryMunicipality={selectedSecondaryMunicipality}
+      />
     </section>
   );
 };
