@@ -11,5 +11,9 @@ export interface MunicipalitiesDto {
 }
 
 export class Municipality {
-  constructor(public id: string, public name: string) {}
+  constructor(public id: string, public name: string, public code: string) {}
+
+  getYear() {
+    return this.code.replace(/[^0-9]/g, "");
+  }
 }

@@ -41,12 +41,14 @@ const Header: React.FC<Props> = props => {
     setRegionalZone
   ] = useState<RegionalZoneDto | null>();
 
-  const [selectedPrimaryMunicipality, setPrimaryMunicipality] = useState<
-    Municipality | undefined
-  >(undefined);
-  const [selectedSecondaryMunicipality, setSecondaryMunicipality] = useState<
-    Municipality | undefined
-  >(undefined);
+  const [
+    selectedPrimaryMunicipality,
+    setPrimaryMunicipality
+  ] = useState<Municipality | null>();
+  const [
+    selectedSecondaryMunicipality,
+    setSecondaryMunicipality
+  ] = useState<Municipality | null>();
 
   const [regionalResponse] = useAxios<RegionalZoneDto[]>({
     method: "GET",
@@ -65,7 +67,11 @@ const Header: React.FC<Props> = props => {
         }
 
         return municipalities.values.map((id, index) => {
-          return new Municipality(id, municipalities.valueTexts[index]);
+          return new Municipality(
+            id,
+            municipalities.valueTexts[index],
+            municipalities.code
+          );
         });
       }
     },
@@ -103,7 +109,7 @@ const Header: React.FC<Props> = props => {
       value: unknown;
     }>
   ) => {
-    const selectedZone = regionalResponse?.data?.find(
+    const selectedZone = regionalResponse.data.find(
       zone => zone.id === (event.target.value as string)
     );
     setRegionalZone(selectedZone);
@@ -115,8 +121,7 @@ const Header: React.FC<Props> = props => {
       value: unknown;
     }>
   ) => {
-    console.log("called " + event.target.value);
-    const selectedMunicipality = municipalityResponse?.data?.find(
+    const selectedMunicipality = municipalityResponse.data.find(
       municipality => municipality.id === (event.target.value as string)
     );
     setPrimaryMunicipality(selectedMunicipality);
@@ -128,10 +133,10 @@ const Header: React.FC<Props> = props => {
       value: unknown;
     }>
   ) => {
-    console.log("called " + event.target.value);
     const selectedMunicipality = municipalityResponse?.data?.find(
       municipality => municipality.id === (event.target.value as string)
     );
+    console.log(selectedMunicipality);
     setSecondaryMunicipality(selectedMunicipality);
   };
 
@@ -194,7 +199,7 @@ const Header: React.FC<Props> = props => {
             <Select
               native
               id="primary-zone-select"
-              value={selectedPrimaryMunicipality}
+              value={selectedPrimaryMunicipality?.id}
               onChange={handlePrimaryMunicipalityChange}
               disabled={
                 regionalResponse.loading || municipalityResponse.loading
@@ -233,7 +238,7 @@ const Header: React.FC<Props> = props => {
             <Select
               native
               id="secondary-zone-select"
-              value={selectedSecondaryMunicipality}
+              value={selectedSecondaryMunicipality?.id}
               onChange={handleSecondaryMunicipalityChange}
               disabled={
                 regionalResponse.loading || municipalityResponse.loading
@@ -264,10 +269,12 @@ const Header: React.FC<Props> = props => {
       ) : null}
 
       <h2>Avainluvut</h2>
-      <KeyFigureTable
-        primaryMunicipality={selectedPrimaryMunicipality}
-        secondaryMunicipality={selectedSecondaryMunicipality}
-      />
+      {selectedPrimaryMunicipality && (
+        <KeyFigureTable
+          primaryMunicipality={selectedPrimaryMunicipality}
+          secondaryMunicipality={selectedSecondaryMunicipality}
+        />
+      )}
     </section>
   );
 };
