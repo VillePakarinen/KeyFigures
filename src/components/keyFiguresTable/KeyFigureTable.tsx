@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from "react";
 import useAxios from "axios-hooks";
+import { makeStyles } from "@material-ui/core/styles";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableContainer from "@material-ui/core/TableContainer";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import Paper from "@material-ui/core/Paper";
+import Axios from "axios";
 
 import { Municipality } from "../header/model/municipalitiesDto";
 import { KeyFigure, KeyFiguresDto } from "./model/keyFigureDto";
-import { Paper } from "@material-ui/core";
-import Axios from "axios";
 
 interface Props {
   primaryMunicipality: Municipality;
@@ -26,10 +33,18 @@ function createPxQuery(code: string, id: string) {
   };
 }
 
+const useStyles = makeStyles({
+  table: {
+    minWidth: 650
+  }
+});
+
 const KeyFigureTable: React.FC<Props> = ({
   primaryMunicipality,
   secondaryMunicipality
 }) => {
+  const classes = useStyles();
+
   const [primaryKeyFigures, setPrimaryKeyFigures] = useState<KeyFigure[]>([]);
   const [secondaryKeyFigures, setSecondaryKeyFigures] = useState<KeyFigure[]>(
     []
@@ -95,18 +110,29 @@ const KeyFigureTable: React.FC<Props> = ({
     <div>
       KeyFigures: for {JSON.stringify(primaryMunicipality)} and
       {JSON.stringify(secondaryMunicipality)}
-      {primaryKeyFigures &&
-        primaryKeyFigures.map((keyFigure, index) => {
-          return (
-            <Paper elevation={3} key={index}>
-              <h3>{keyFigure.label}</h3>
-              <p>{keyFigure.value}</p>
-              {secondaryKeyFigures[index] && (
-                <p>{secondaryKeyFigures[index].value}</p>
-              )}
-            </Paper>
-          );
-        })}
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Avainluku, tiedot vuodelta </TableCell>
+              <TableCell>{primaryMunicipality.name}</TableCell>
+              <TableCell>{secondaryMunicipality?.name}</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {primaryKeyFigures &&
+              primaryKeyFigures.map((keyFigure, index) => {
+                return (
+                  <TableRow key={keyFigure.id}>
+                    <TableCell>{keyFigure.label}</TableCell>
+                    <TableCell>{keyFigure.value}</TableCell>
+                    <TableCell>{secondaryKeyFigures?.[index]?.value}</TableCell>
+                  </TableRow>
+                );
+              })}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   );
 };
