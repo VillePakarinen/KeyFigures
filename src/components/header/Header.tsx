@@ -4,16 +4,10 @@ import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import Grid from "@material-ui/core/Grid";
-import {
-  makeStyles,
-  Theme,
-  createStyles,
-  FormHelperText,
-  LinearProgress
-} from "@material-ui/core";
+import { makeStyles, Theme, createStyles, FormHelperText, LinearProgress } from "@material-ui/core";
 import useAxios from "axios-hooks";
 
-import { RegionalZoneDto } from "./model/regionalZoneDto";
+import { RegionalZone } from "./model/regionalZone";
 import { MunicipalitiesDto, Municipality } from "./model/municipalitiesDto";
 import KeyFigureTable from "../keyFiguresTable/KeyFigureTable";
 
@@ -36,21 +30,12 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const Header: React.FC<Props> = props => {
   const classes = useStyles();
-  const [
-    selectedRegionalZone,
-    setRegionalZone
-  ] = useState<RegionalZoneDto | null>();
+  const [selectedRegionalZone, setRegionalZone] = useState<RegionalZone | null>();
 
-  const [
-    selectedPrimaryMunicipality,
-    setPrimaryMunicipality
-  ] = useState<Municipality | null>();
-  const [
-    selectedSecondaryMunicipality,
-    setSecondaryMunicipality
-  ] = useState<Municipality | null>();
+  const [selectedPrimaryMunicipality, setPrimaryMunicipality] = useState<Municipality | null>();
+  const [selectedSecondaryMunicipality, setSecondaryMunicipality] = useState<Municipality | null>();
 
-  const [regionalResponse] = useAxios<RegionalZoneDto[]>({
+  const [regionalResponse] = useAxios<RegionalZone[]>({
     method: "GET",
     url: "https://pxnet2.stat.fi/PXWeb/api/v1/fi/Kuntien_avainluvut/"
   });
@@ -67,11 +52,7 @@ const Header: React.FC<Props> = props => {
         }
 
         return municipalities.values.map((id, index) => {
-          return new Municipality(
-            id,
-            municipalities.valueTexts[index],
-            municipalities.code
-          );
+          return new Municipality(id, municipalities.valueTexts[index], municipalities.code);
         });
       }
     },
@@ -145,21 +126,11 @@ const Header: React.FC<Props> = props => {
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <h1>
-            <FormattedMessage
-              id="app-name"
-              defaultMessage="Kuntien avainluvut"
-            />
+            <FormattedMessage id="app-name" defaultMessage="Kuntien avainluvut" />
           </h1>
           <FormControl className={classes.formControl}>
-            <InputLabel
-              id="regional-zone-label"
-              htmlFor="regional-zone-select"
-              shrink
-            >
-              <FormattedMessage
-                id="regional-time-period"
-                defaultMessage="Aluejako"
-              />
+            <InputLabel id="regional-zone-label" htmlFor="regional-zone-select" shrink>
+              <FormattedMessage id="regional-time-period" defaultMessage="Aluejako" />
             </InputLabel>
             <Select
               native
@@ -186,26 +157,15 @@ const Header: React.FC<Props> = props => {
         </Grid>
         <Grid item xs={6}>
           <FormControl className={classes.formControl}>
-            <InputLabel
-              id="primary-zone-label"
-              htmlFor="primary-zone-select"
-              shrink
-            >
-              <FormattedMessage
-                id="primary-region"
-                defaultMessage="Ensisijainen alue"
-              />
+            <InputLabel id="primary-zone-label" htmlFor="primary-zone-select" shrink>
+              <FormattedMessage id="primary-region" defaultMessage="Ensisijainen alue" />
             </InputLabel>
             <Select
               native
               id="primary-zone-select"
               value={selectedPrimaryMunicipality?.id}
               onChange={handlePrimaryMunicipalityChange}
-              disabled={
-                regionalResponse.loading || municipalityResponse.loading
-                  ? true
-                  : false
-              }
+              disabled={regionalResponse.loading || municipalityResponse.loading ? true : false}
             >
               {municipalityResponse.data?.map((municipality, index) => {
                 return (
@@ -225,26 +185,15 @@ const Header: React.FC<Props> = props => {
         </Grid>
         <Grid item xs={6}>
           <FormControl className={classes.formControl}>
-            <InputLabel
-              id="secondary-zone-label"
-              htmlFor="secondary-zone-select"
-              shrink
-            >
-              <FormattedMessage
-                id="secondary-region"
-                defaultMessage="Vertailtava alue"
-              />
+            <InputLabel id="secondary-zone-label" htmlFor="secondary-zone-select" shrink>
+              <FormattedMessage id="secondary-region" defaultMessage="Vertailtava alue" />
             </InputLabel>
             <Select
               native
               id="secondary-zone-select"
               value={selectedSecondaryMunicipality?.id}
               onChange={handleSecondaryMunicipalityChange}
-              disabled={
-                regionalResponse.loading || municipalityResponse.loading
-                  ? true
-                  : false
-              }
+              disabled={regionalResponse.loading || municipalityResponse.loading ? true : false}
             >
               <option value={undefined}></option>
               {municipalityResponse.data?.map((municipality, index) => {
@@ -264,9 +213,7 @@ const Header: React.FC<Props> = props => {
           </FormControl>
         </Grid>
       </Grid>
-      {municipalityResponse.loading || regionalResponse.loading ? (
-        <LinearProgress />
-      ) : null}
+      {municipalityResponse.loading || regionalResponse.loading ? <LinearProgress /> : null}
 
       <h2>Avainluvut</h2>
       {selectedPrimaryMunicipality && (

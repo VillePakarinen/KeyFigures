@@ -1,4 +1,4 @@
-export interface RegionalZoneDto {
+export interface RegionalZone {
   id: string;
   type: string;
   text: string;
