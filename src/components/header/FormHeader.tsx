@@ -79,6 +79,7 @@ const FormHeader: React.FC<Props> = props => {
                 id="primary-zone-select"
                 value={props.selectedPrimaryMuncipality?.id}
                 onChange={event => props.primaryMuncipalityHandler(event.target.value as string)}
+                displayEmpty={true}
               >
                 {props.municipalities.map(municipality => {
                   return (
@@ -106,7 +107,9 @@ const FormHeader: React.FC<Props> = props => {
                 id="secondary-zone-select"
                 value={props.selectedSecondaryMuncipality?.id}
                 onChange={event => props.secondaryMuncipalityHandler(event.target.value as string)}
+                displayEmpty={true}
               >
+                <option value=""></option> {/** Default empty value */}
                 {props.municipalities.map(municipality => {
                   return (
                     <option key={municipality.id} value={municipality.id}>

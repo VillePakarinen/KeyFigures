@@ -32,4 +32,19 @@ export class KeyFigureService {
         });
       });
   }
+
+  private createPxQuery(code: string, id: string) {
+    return {
+      query: [
+        {
+          code,
+          selection: {
+            filter: "item",
+            values: [id]
+          }
+        }
+      ],
+      response: { format: "json-stat" }
+    };
+  }
 }

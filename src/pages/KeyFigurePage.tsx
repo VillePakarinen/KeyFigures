@@ -51,7 +51,9 @@ const KeyFigurePage: React.FC<Props> = props => {
       .getRegionalZones()
       .then(zones => {
         setRegionalZones(zones);
-        if (!selectedRegionalZone && zones.length) {
+
+        // Preselect default regional zone if it hasn't been set
+        if (!selectedRegionalZone && zones.length > 0) {
           setSelectedRegionalZone(zones[0]);
         }
       })
@@ -67,7 +69,12 @@ const KeyFigurePage: React.FC<Props> = props => {
       setMunicipalitiesLoading(true);
       keyFigureService
         .getMunicipalities(selectedRegionalZone.id)
-        .then(municipalities => setMunicipalities(municipalities))
+        .then(municipalities => {
+          setMunicipalities(municipalities);
+          if (!selectedPrimaryMunicipality && municipalities.length > 0) {
+            setSelectedPrimaryMunicipality(municipalities[0]);
+          }
+        })
         .catch(error => {
           console.error(error);
           setErrorMessage("Failed fetching municipalities from network");
