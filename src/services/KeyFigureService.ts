@@ -1,3 +1,4 @@
+import { KeyFigure, KeyFiguresDto } from "./../components/keyFiguresTable/model/keyFigureDto";
 import axios from "axios";
 
 import { MunicipalitiesDto, Municipality } from "./../components/header/model/municipalitiesDto";
@@ -33,18 +34,34 @@ export class KeyFigureService {
       });
   }
 
-  private createPxQuery(code: string, id: string) {
-    return {
-      query: [
+  async getMuncipalityKeyFigures(muncipality: Municipality): Promise<KeyFigure[]> {
+    return axios
+      .post<KeyFiguresDto>(
+        `https://pxnet2.stat.fi/PXWeb/api/v1/fi/Kuntien_avainluvut/${muncipality.getYear()}/kuntien_avainluvut_${muncipality.getYear()}_viimeisin.px`,
         {
-          code,
-          selection: {
-            filter: "item",
-            values: [id]
-          }
+          query: [
+            {
+              code: muncipality.code,
+              selection: {
+                filter: "item",
+                values: [muncipality.id]
+              }
+            }
+          ],
+          response: { format: "json-stat" }
         }
-      ],
-      response: { format: "json-stat" }
-    };
+      )
+      .then(response => {
+        return Object.entries(response.data.dataset.dimension.Tiedot.category.label).map(
+          ([key, valueText], index): KeyFigure => {
+            return new KeyFigure(
+              key,
+              response.data.dataset.dimension.Tiedot.category.index[key],
+              valueText,
+              response.data.dataset.value[index]
+            );
+          }
+        );
+      });
   }
 }

@@ -1,9 +1,13 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { FormattedMessage } from "react-intl";
+import LinearProgress from "@material-ui/core/LinearProgress";
+
 import { useKeyFigureService } from "../services/KeyFigureServiceProvider";
 import FormHeader from "../components/header/FormHeader";
 import { RegionalZone } from "../components/header/model/regionalZone";
 import { Municipality } from "../components/header/model/municipalitiesDto";
+import { KeyFigure } from "../components/keyFiguresTable/model/keyFigureDto";
+import KeyFigureTable from "../components/keyFiguresTable/KeyFigureTable";
 
 interface Props {}
 
@@ -18,16 +22,22 @@ const KeyFigurePage: React.FC<Props> = props => {
     Municipality
   >();
 
+  const [primaryKeyFigures, setPrimaryKeyFigures] = useState<KeyFigure[]>([]);
+  const [secondaryKeyFigures, setSecondaryKeyFigures] = useState<KeyFigure[]>([]);
+
   // Initialize http-state
   const [regionalZoneLoading, setRegionalZonesLoading] = useState<boolean>(false);
-  const [municipalitiesLoaiding, setMunicipalitiesLoading] = useState<boolean>(false);
+  const [municipalitiesLoading, setMunicipalitiesLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>();
+
+  const [primaryKeyFiguresLoading, setPrimaryKeyFiguresLoading] = useState<boolean>(false);
+  const [secondaryKeyFiguresLoading, setSecondaryKeyFiguresLoading] = useState<boolean>(false);
+  const [keyfigureErrorMessage, setKeyFigureErrorMessage] = useState<string>();
 
   // Initialize dependencies
   const keyFigureService = useKeyFigureService();
 
   // Initialize form change handlers
-
   const zoneChangeHandler = (zoneId: string) => {
     setSelectedRegionalZone(regionalZones.find(zone => zone.id === zoneId));
   };
@@ -44,8 +54,9 @@ const KeyFigurePage: React.FC<Props> = props => {
     );
   };
 
-  // Components effects
+  // Side effects
   useEffect(() => {
+    // Get regional zones for the application
     setRegionalZonesLoading(true);
     keyFigureService
       .getRegionalZones()
@@ -66,14 +77,12 @@ const KeyFigurePage: React.FC<Props> = props => {
 
   useEffect(() => {
     if (selectedRegionalZone) {
+      // Get municipalities for selected regional zone
       setMunicipalitiesLoading(true);
       keyFigureService
         .getMunicipalities(selectedRegionalZone.id)
         .then(municipalities => {
           setMunicipalities(municipalities);
-          if (!selectedPrimaryMunicipality && municipalities.length > 0) {
-            setSelectedPrimaryMunicipality(municipalities[0]);
-          }
         })
         .catch(error => {
           console.error(error);
@@ -82,6 +91,41 @@ const KeyFigurePage: React.FC<Props> = props => {
         .finally(() => setMunicipalitiesLoading(false));
     }
   }, [selectedRegionalZone, keyFigureService]);
+
+  useEffect(() => {
+    if (selectedPrimaryMunicipality) {
+      setPrimaryKeyFiguresLoading(true);
+      keyFigureService
+        .getMuncipalityKeyFigures(selectedPrimaryMunicipality)
+        .then(keyFigures => {
+          setPrimaryKeyFigures(keyFigures);
+        })
+        .catch(error => {
+          console.error(error);
+          setKeyFigureErrorMessage("Fetching keyfigures failed");
+        })
+        .finally(() => setPrimaryKeyFiguresLoading(false));
+    }
+  }, [keyFigureService, selectedPrimaryMunicipality]);
+
+  useEffect(() => {
+    if (selectedSecondaryMunicipality) {
+      setSecondaryKeyFiguresLoading(true);
+      keyFigureService
+        .getMuncipalityKeyFigures(selectedSecondaryMunicipality)
+        .then(keyFigures => {
+          setSecondaryKeyFigures(keyFigures);
+        })
+        .catch(error => {
+          console.error(error);
+          setKeyFigureErrorMessage("Fetching keyfigures failed");
+        })
+        .finally(() => setSecondaryKeyFiguresLoading(false));
+    } else {
+      // Clear values from list
+      setSecondaryKeyFigures([]);
+    }
+  }, [keyFigureService, selectedSecondaryMunicipality]);
 
   return (
     <>
@@ -97,6 +141,21 @@ const KeyFigurePage: React.FC<Props> = props => {
         selectedZone={selectedRegionalZone}
         selectedPrimaryMuncipality={selectedPrimaryMunicipality}
         selectedSecondaryMuncipality={selectedSecondaryMunicipality}
+      />
+      <section style={{ minHeight: 10 }}>
+        {municipalitiesLoading ||
+        regionalZoneLoading ||
+        primaryKeyFiguresLoading ||
+        secondaryKeyFiguresLoading ? (
+          <LinearProgress aria-label="Please wait" />
+        ) : null}
+      </section>
+
+      <KeyFigureTable
+        primaryMunicipality={selectedPrimaryMunicipality}
+        secondaryMunicipality={selectedSecondaryMunicipality}
+        primaryKeyFigures={primaryKeyFigures}
+        secondaryKeyFigures={secondaryKeyFigures}
       />
     </>
   );

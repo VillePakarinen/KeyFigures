@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FormattedMessage } from "react-intl";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -35,8 +35,43 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const FormHeader: React.FC<Props> = props => {
+const FormHeader: React.FC<Props> = ({
+  regionalZones,
+  municipalities,
+  zoneChangeHandler,
+  primaryMuncipalityHandler,
+  secondaryMuncipalityHandler,
+  selectedZone,
+  selectedPrimaryMuncipality,
+  selectedSecondaryMuncipality
+}) => {
   const classes = useStyles();
+  console.log("rendered");
+
+  // Side effect for selecting default values for the form
+  useEffect(() => {
+    if (municipalities.length > 0) {
+      if (!selectedPrimaryMuncipality) {
+        primaryMuncipalityHandler(municipalities[0].id);
+      } else {
+        const selected = municipalities.find(mun => mun.id === selectedPrimaryMuncipality.id);
+        selected
+          ? primaryMuncipalityHandler(selected.id)
+          : primaryMuncipalityHandler(municipalities[0].id);
+      }
+
+      if (selectedSecondaryMuncipality) {
+        const selected = municipalities.find(mun => mun.id === selectedSecondaryMuncipality.id);
+        selected ? secondaryMuncipalityHandler(selected.id) : secondaryMuncipalityHandler("");
+      }
+    }
+  }, [
+    municipalities,
+    primaryMuncipalityHandler,
+    secondaryMuncipalityHandler,
+    selectedPrimaryMuncipality,
+    selectedSecondaryMuncipality
+  ]);
 
   return (
     <section className={classes.root}>
@@ -50,10 +85,10 @@ const FormHeader: React.FC<Props> = props => {
               <Select
                 native
                 id="regional-zone-select"
-                value={props.selectedZone?.id}
-                onChange={event => props.zoneChangeHandler(event.target.value as string)}
+                value={selectedZone?.id}
+                onChange={event => zoneChangeHandler(event.target.value as string)}
               >
-                {props.regionalZones.map(zone => {
+                {regionalZones.map(zone => {
                   return (
                     <option key={zone.id} value={zone.id}>
                       {zone.text}
@@ -77,11 +112,11 @@ const FormHeader: React.FC<Props> = props => {
               <Select
                 native
                 id="primary-zone-select"
-                value={props.selectedPrimaryMuncipality?.id}
-                onChange={event => props.primaryMuncipalityHandler(event.target.value as string)}
+                value={selectedPrimaryMuncipality?.id}
+                onChange={event => primaryMuncipalityHandler(event.target.value as string)}
                 displayEmpty={true}
               >
-                {props.municipalities.map(municipality => {
+                {municipalities.map(municipality => {
                   return (
                     <option key={municipality.id} value={municipality.id}>
                       {municipality.name}
@@ -105,12 +140,12 @@ const FormHeader: React.FC<Props> = props => {
               <Select
                 native
                 id="secondary-zone-select"
-                value={props.selectedSecondaryMuncipality?.id}
-                onChange={event => props.secondaryMuncipalityHandler(event.target.value as string)}
+                value={selectedSecondaryMuncipality?.id}
+                onChange={event => secondaryMuncipalityHandler(event.target.value as string)}
                 displayEmpty={true}
               >
                 <option value=""></option> {/** Default empty value */}
-                {props.municipalities.map(municipality => {
+                {municipalities.map(municipality => {
                   return (
                     <option key={municipality.id} value={municipality.id}>
                       {municipality.name}
@@ -132,4 +167,4 @@ const FormHeader: React.FC<Props> = props => {
   );
 };
 
-export default FormHeader;
+export default React.memo(FormHeader);
