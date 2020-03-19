@@ -1,8 +1,8 @@
-import { KeyFigure, KeyFiguresDto } from "./../components/keyFiguresTable/model/keyFigureDto";
 import axios from "axios";
 
-import { MunicipalitiesDto, Municipality } from "./../components/header/model/municipalitiesDto";
-import { RegionalZone } from "./../components/header/model/regionalZone";
+import { RegionalZone } from "../model/regionalZone";
+import { Municipality, MunicipalitiesDto } from "../model/municipalitiesDto";
+import { KeyFigure, KeyFiguresDto } from "../model/keyFigureDto";
 
 export class KeyFigureService {
   async getRegionalZones(): Promise<RegionalZone[]> {

@@ -3,11 +3,11 @@ import { FormattedMessage } from "react-intl";
 import LinearProgress from "@material-ui/core/LinearProgress";
 
 import { useKeyFigureService } from "../services/KeyFigureServiceProvider";
-import FormHeader from "../components/header/FormHeader";
-import { RegionalZone } from "../components/header/model/regionalZone";
-import { Municipality } from "../components/header/model/municipalitiesDto";
-import { KeyFigure } from "../components/keyFiguresTable/model/keyFigureDto";
 import KeyFigureTable from "../components/keyFiguresTable/KeyFigureTable";
+import { RegionalZone } from "../model/regionalZone";
+import { Municipality } from "../model/municipalitiesDto";
+import { KeyFigure } from "../model/keyFigureDto";
+import FormHeader from "../components/formHeader/FormHeader";
 
 interface Props {}
 

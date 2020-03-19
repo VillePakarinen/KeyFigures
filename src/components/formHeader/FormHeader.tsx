@@ -6,8 +6,8 @@ import Select from "@material-ui/core/Select";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles, Theme, createStyles, FormHelperText } from "@material-ui/core";
 
-import { RegionalZone } from "./model/regionalZone";
-import { Municipality } from "./model/municipalitiesDto";
+import { RegionalZone } from "../../model/regionalZone";
+import { Municipality } from "../../model/municipalitiesDto";
 
 interface Props {
   regionalZones: RegionalZone[];
