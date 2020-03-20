@@ -29,7 +29,12 @@ export class KeyFigureService {
         }
 
         return municipalities.values.map((id, index) => {
-          return new Municipality(id, municipalities.valueTexts[index], municipalities.code);
+          return new Municipality(
+            id,
+            municipalities.valueTexts[index],
+            municipalities.code,
+            index + 1 // This value is needed for verti graphics
+          );
         });
       });
   }

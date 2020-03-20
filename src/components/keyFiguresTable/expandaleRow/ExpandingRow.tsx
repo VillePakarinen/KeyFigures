@@ -57,8 +57,8 @@ const ExpandableRow: React.FC<Props> = ({ values, expandable, render }) => {
   return (
     <>
       <TableRow>
-        {values.map(value => (
-          <TableCell>{value}</TableCell>
+        {values.map((value, index) => (
+          <TableCell key={index}>{value}</TableCell>
         ))}
         {expandableIcon}
       </TableRow>

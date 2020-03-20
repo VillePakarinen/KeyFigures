@@ -46,7 +46,6 @@ const FormHeader: React.FC<Props> = ({
   selectedSecondaryMuncipality
 }) => {
   const classes = useStyles();
-  console.log("rendered");
 
   // Side effect for selecting default values for the form
   useEffect(() => {

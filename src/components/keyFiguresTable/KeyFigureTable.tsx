@@ -11,6 +11,7 @@ import Paper from "@material-ui/core/Paper";
 import { Municipality } from "../../model/municipalitiesDto";
 import { KeyFigure } from "../../model/keyFigureDto";
 import ExpandableRow from "./expandaleRow/ExpandingRow";
+import GrafContainer from "./grafContainer/GrafContainer";
 
 interface Props {
   primaryMunicipality?: Municipality;
@@ -70,12 +71,15 @@ const KeyFigureTable: React.FC<Props> = ({
                       secondaryKeyFigures?.[index]?.value.toString()
                     ]}
                     render={
-                      <div>
-                        This should be visible
-                        <div>This should be visible</div>
-                        <div>This should be visible</div>
-                        <div>This should be visible</div>
-                      </div>
+                      <GrafContainer
+                        url={`https://vertinet2.stat.fi/verti/graph/viewpage.aspx?ifile=quicktables/kuntien_avainluvut_2020/avainluku_${
+                          keyFigure.id
+                        }&isext=true&lang=3&rind=${primaryMunicipality?.pxIndex},${
+                          secondaryMunicipality !== undefined ? secondaryMunicipality.pxIndex : ""
+                        }`}
+                        width="100%"
+                        height="400px"
+                      />
                     }
                   />
                 );
