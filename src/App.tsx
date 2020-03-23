@@ -18,9 +18,7 @@ const App = (props: Props) => {
   return (
     <ThemeProvider theme={theme}>
       <ErrorBoundary render={<h1>Oops something went wrong</h1>}>
-        <I18nProvider
-          locale={props.language ? props.language : LOCALES.FINNISH}
-        >
+        <I18nProvider locale={props.language ? props.language : LOCALES.FINNISH}>
           <CssBaseline />
           <div className="App">
             <KeyFigureServiceProvider>

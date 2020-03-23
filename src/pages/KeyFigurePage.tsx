@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { FormattedMessage } from "react-intl";
 import LinearProgress from "@material-ui/core/LinearProgress";
+import Fade from "@material-ui/core/Fade";
 
 import { useKeyFigureService } from "../services/KeyFigureServiceProvider";
 import KeyFigureTable from "../components/keyFiguresTable/KeyFigureTable";
@@ -28,31 +29,38 @@ const KeyFigurePage: React.FC<Props> = props => {
   // Initialize http-state
   const [regionalZoneLoading, setRegionalZonesLoading] = useState<boolean>(false);
   const [municipalitiesLoading, setMunicipalitiesLoading] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string>();
 
   const [primaryKeyFiguresLoading, setPrimaryKeyFiguresLoading] = useState<boolean>(false);
   const [secondaryKeyFiguresLoading, setSecondaryKeyFiguresLoading] = useState<boolean>(false);
-  const [keyfigureErrorMessage, setKeyFigureErrorMessage] = useState<string>();
 
   // Initialize dependencies
   const keyFigureService = useKeyFigureService();
 
   // Initialize form change handlers
-  const zoneChangeHandler = (zoneId: string) => {
-    setSelectedRegionalZone(regionalZones.find(zone => zone.id === zoneId));
-  };
+  const zoneChangeHandler = useCallback(
+    (zoneId: string) => {
+      setSelectedRegionalZone(regionalZones.find(zone => zone.id === zoneId));
+    },
+    [regionalZones]
+  );
 
-  const primaryMuncipalityHandler = (muncipalityId: string) => {
-    setSelectedPrimaryMunicipality(
-      municipalities.find(municipality => municipality.id === muncipalityId)
-    );
-  };
+  const primaryMuncipalityHandler = useCallback(
+    (muncipalityId: string) => {
+      setSelectedPrimaryMunicipality(
+        municipalities.find(municipality => municipality.id === muncipalityId)
+      );
+    },
+    [municipalities]
+  );
 
-  const secondaryMuncipalityHandler = (muncipalityId: string) => {
-    setSelectedSecondaryMunicipality(
-      municipalities.find(municipality => municipality.id === muncipalityId)
-    );
-  };
+  const secondaryMuncipalityHandler = useCallback(
+    (muncipalityId: string) => {
+      setSelectedSecondaryMunicipality(
+        municipalities.find(municipality => municipality.id === muncipalityId)
+      );
+    },
+    [municipalities]
+  );
 
   // Side effects
   useEffect(() => {
@@ -70,10 +78,9 @@ const KeyFigurePage: React.FC<Props> = props => {
       })
       .catch(error => {
         console.error(error);
-        setErrorMessage("Failed fetching regional zones");
       })
       .finally(() => setRegionalZonesLoading(false));
-  }, [keyFigureService]);
+  }, [keyFigureService, selectedRegionalZone]);
 
   useEffect(() => {
     if (selectedRegionalZone) {
@@ -86,7 +93,6 @@ const KeyFigurePage: React.FC<Props> = props => {
         })
         .catch(error => {
           console.error(error);
-          setErrorMessage("Failed fetching municipalities from network");
         })
         .finally(() => setMunicipalitiesLoading(false));
     }
@@ -102,7 +108,6 @@ const KeyFigurePage: React.FC<Props> = props => {
         })
         .catch(error => {
           console.error(error);
-          setKeyFigureErrorMessage("Fetching keyfigures failed");
         })
         .finally(() => setPrimaryKeyFiguresLoading(false));
     }
@@ -118,7 +123,6 @@ const KeyFigurePage: React.FC<Props> = props => {
         })
         .catch(error => {
           console.error(error);
-          setKeyFigureErrorMessage("Fetching keyfigures failed");
         })
         .finally(() => setSecondaryKeyFiguresLoading(false));
     } else {
@@ -143,12 +147,20 @@ const KeyFigurePage: React.FC<Props> = props => {
         selectedSecondaryMuncipality={selectedSecondaryMunicipality}
       />
       <section style={{ minHeight: 10 }}>
-        {municipalitiesLoading ||
-        regionalZoneLoading ||
-        primaryKeyFiguresLoading ||
-        secondaryKeyFiguresLoading ? (
+        <Fade
+          in={
+            municipalitiesLoading ||
+            primaryKeyFiguresLoading ||
+            secondaryKeyFiguresLoading ||
+            regionalZoneLoading
+          }
+          timeout={{
+            enter: 1000,
+            exit: 1500
+          }}
+        >
           <LinearProgress aria-label="Please wait" />
-        ) : null}
+        </Fade>
       </section>
 
       <KeyFigureTable

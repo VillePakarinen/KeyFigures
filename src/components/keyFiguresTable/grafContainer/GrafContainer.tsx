@@ -14,6 +14,7 @@ const GrafContainer: React.FC<Props> = props => {
     <>
       {loading && <LinearProgress />}
       <iframe
+        title={props.url}
         src={props.url}
         style={{ border: "none", height: props.height, width: props.width }}
         onLoadStart={() => setLoading(true)}
