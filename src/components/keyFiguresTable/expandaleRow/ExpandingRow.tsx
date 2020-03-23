@@ -7,7 +7,6 @@ import { IconButton, makeStyles } from "@material-ui/core";
 import transitions from "@material-ui/core/styles/transitions";
 
 interface Props {
-  values: string[];
   expandable: boolean;
   render: any;
 }
@@ -26,7 +25,7 @@ const useStyles = makeStyles({
   }
 });
 
-const ExpandableRow: React.FC<Props> = ({ values, expandable, render }) => {
+const ExpandableRow: React.FC<Props> = ({ expandable, render, children }) => {
   const [isOpen, setOpen] = useState(false);
 
   const classes = useStyles();
@@ -46,7 +45,10 @@ const ExpandableRow: React.FC<Props> = ({ values, expandable, render }) => {
 
   const expandableContent = expandable ? (
     <TableRow aria-hidden={!isOpen}>
-      <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={values.length + 1}>
+      <TableCell
+        style={{ paddingBottom: 0, paddingTop: 0 }}
+        colSpan={React.Children.toArray(children).length + 1}
+      >
         <Collapse in={isOpen} unmountOnExit timeout="auto">
           {render}
         </Collapse>
@@ -57,9 +59,7 @@ const ExpandableRow: React.FC<Props> = ({ values, expandable, render }) => {
   return (
     <>
       <TableRow>
-        {values.map((value, index) => (
-          <TableCell key={index}>{value}</TableCell>
-        ))}
+        {children}
         {expandableIcon}
       </TableRow>
       {expandableContent}

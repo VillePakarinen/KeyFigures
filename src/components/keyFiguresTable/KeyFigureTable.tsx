@@ -27,14 +27,11 @@ const useStyles = makeStyles({
   container: {
     maxHeight: "70vh"
   },
-  labelColumn: {
-    width: "60%"
-  },
   valueColumn: {
-    width: "25%"
+    width: "15%"
   },
   buttonColumn: {
-    width: "5%"
+    width: "15%"
   }
 });
 
@@ -52,9 +49,13 @@ const KeyFigureTable: React.FC<Props> = ({
         <Table className={classes.table} size="small" aria-label="Kuntien avainlukujen taulukko">
           <TableHead>
             <TableRow>
-              <TableCell className={classes.labelColumn}>Avainluku, tiedot vuodelta </TableCell>
-              <TableCell className={classes.valueColumn}>{primaryMunicipality?.name}</TableCell>
-              <TableCell className={classes.valueColumn}>{secondaryMunicipality?.name}</TableCell>
+              <TableCell>Avainluku, tiedot vuodelta </TableCell>
+              <TableCell align="right" className={classes.valueColumn}>
+                {primaryMunicipality?.name}
+              </TableCell>
+              <TableCell align="right" className={classes.valueColumn}>
+                {secondaryMunicipality?.name}
+              </TableCell>
               <TableCell></TableCell>
             </TableRow>
           </TableHead>
@@ -65,11 +66,6 @@ const KeyFigureTable: React.FC<Props> = ({
                   <ExpandableRow
                     key={keyFigure.id}
                     expandable={true}
-                    values={[
-                      keyFigure.label,
-                      keyFigure.value.toString(),
-                      secondaryKeyFigures?.[index]?.value.toString()
-                    ]}
                     render={
                       <GrafContainer
                         url={`https://vertinet2.stat.fi/verti/graph/viewpage.aspx?ifile=quicktables/kuntien_avainluvut_2020/avainluku_${
@@ -81,7 +77,11 @@ const KeyFigureTable: React.FC<Props> = ({
                         height="400px"
                       />
                     }
-                  />
+                  >
+                    <TableCell>{keyFigure.label}</TableCell>
+                    <TableCell align="right">{keyFigure.value}</TableCell>
+                    <TableCell align="right">{secondaryKeyFigures?.[index]?.value}</TableCell>
+                  </ExpandableRow>
                 );
               })}
           </TableBody>
