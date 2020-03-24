@@ -53,10 +53,14 @@ const KeyFigureTable: React.FC<Props> = ({
               <TableCell align="right" className={classes.valueColumn}>
                 {primaryMunicipality?.name}
               </TableCell>
-              <TableCell align="right" className={classes.valueColumn}>
+              <TableCell
+                align="right"
+                className={classes.valueColumn}
+                aria-hidden={secondaryMunicipality === undefined}
+              >
                 {secondaryMunicipality?.name}
               </TableCell>
-              <TableCell></TableCell>
+              <TableCell aria-hidden={true}></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -68,11 +72,13 @@ const KeyFigureTable: React.FC<Props> = ({
                     expandable={true}
                     render={
                       <GrafContainer
+                        aria-hidden={true}
                         url={`https://vertinet2.stat.fi/verti/graph/viewpage.aspx?ifile=quicktables/kuntien_avainluvut_2020/avainluku_${
                           keyFigure.id
                         }&isext=true&lang=3&rind=${primaryMunicipality?.pxIndex},${
                           secondaryMunicipality !== undefined ? secondaryMunicipality.pxIndex : ""
                         }`}
+                        title={keyFigure.label}
                         width="100%"
                         height="400px"
                       />
@@ -80,7 +86,9 @@ const KeyFigureTable: React.FC<Props> = ({
                   >
                     <TableCell>{keyFigure.label}</TableCell>
                     <TableCell align="right">{keyFigure.value}</TableCell>
-                    <TableCell align="right">{secondaryKeyFigures?.[index]?.value}</TableCell>
+                    <TableCell align="right" aria-hidden={secondaryKeyFigures[index] === undefined}>
+                      {secondaryKeyFigures?.[index]?.value}
+                    </TableCell>
                   </ExpandableRow>
                 );
               })}

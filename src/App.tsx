@@ -2,6 +2,7 @@ import React from "react";
 import "./App.css";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider } from "@material-ui/core";
+import { SnackbarProvider } from "notistack";
 
 import I18nProvider from "./i18n/I18nProvider";
 import { LOCALES } from "./i18n/locales";
@@ -19,12 +20,14 @@ const App = (props: Props) => {
     <ThemeProvider theme={theme}>
       <ErrorBoundary render={<h1>Oops something went wrong</h1>}>
         <I18nProvider locale={props.language ? props.language : LOCALES.FINNISH}>
-          <CssBaseline />
-          <div className="App">
-            <KeyFigureServiceProvider>
-              <KeyFigurePage />
-            </KeyFigureServiceProvider>
-          </div>
+          <SnackbarProvider maxSnack={3}>
+            <CssBaseline />
+            <div className="App">
+              <KeyFigureServiceProvider>
+                <KeyFigurePage />
+              </KeyFigureServiceProvider>
+            </div>
+          </SnackbarProvider>
         </I18nProvider>
       </ErrorBoundary>
     </ThemeProvider>

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { FormattedMessage } from "react-intl";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Fade from "@material-ui/core/Fade";
+import { useSnackbar } from "notistack";
 
 import { useKeyFigureService } from "../services/KeyFigureServiceProvider";
 import KeyFigureTable from "../components/keyFiguresTable/KeyFigureTable";
@@ -35,6 +36,7 @@ const KeyFigurePage: React.FC<Props> = props => {
 
   // Initialize dependencies
   const keyFigureService = useKeyFigureService();
+  const { enqueueSnackbar } = useSnackbar();
 
   // Initialize form change handlers
   const zoneChangeHandler = useCallback(
@@ -78,9 +80,10 @@ const KeyFigurePage: React.FC<Props> = props => {
       })
       .catch(error => {
         console.error(error);
+        enqueueSnackbar("Fetching regional zones failed");
       })
       .finally(() => setRegionalZonesLoading(false));
-  }, [keyFigureService, selectedRegionalZone]);
+  }, [keyFigureService, selectedRegionalZone, enqueueSnackbar]);
 
   useEffect(() => {
     if (selectedRegionalZone) {
@@ -93,10 +96,11 @@ const KeyFigurePage: React.FC<Props> = props => {
         })
         .catch(error => {
           console.error(error);
+          enqueueSnackbar("Fetching municipalities failed");
         })
         .finally(() => setMunicipalitiesLoading(false));
     }
-  }, [selectedRegionalZone, keyFigureService]);
+  }, [selectedRegionalZone, keyFigureService, enqueueSnackbar]);
 
   useEffect(() => {
     if (selectedPrimaryMunicipality) {
@@ -107,11 +111,12 @@ const KeyFigurePage: React.FC<Props> = props => {
           setPrimaryKeyFigures(keyFigures);
         })
         .catch(error => {
+          enqueueSnackbar("Fetching keyfigures failed");
           console.error(error);
         })
         .finally(() => setPrimaryKeyFiguresLoading(false));
     }
-  }, [keyFigureService, selectedPrimaryMunicipality]);
+  }, [keyFigureService, selectedPrimaryMunicipality, enqueueSnackbar]);
 
   useEffect(() => {
     if (selectedSecondaryMunicipality) {
@@ -123,13 +128,14 @@ const KeyFigurePage: React.FC<Props> = props => {
         })
         .catch(error => {
           console.error(error);
+          enqueueSnackbar("Fetching keyfigures failed");
         })
         .finally(() => setSecondaryKeyFiguresLoading(false));
     } else {
       // Clear values from list
       setSecondaryKeyFigures([]);
     }
-  }, [keyFigureService, selectedSecondaryMunicipality]);
+  }, [keyFigureService, selectedSecondaryMunicipality, enqueueSnackbar]);
 
   return (
     <>
