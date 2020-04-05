@@ -1,7 +1,7 @@
 import React from "react";
 import "./App.css";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import { ThemeProvider } from "@material-ui/core";
+import { ThemeProvider, StylesProvider } from "@material-ui/core";
 import { SnackbarProvider } from "notistack";
 
 import I18nProvider from "./i18n/I18nProvider";
@@ -18,18 +18,20 @@ interface Props {
 const App = (props: Props) => {
   return (
     <ThemeProvider theme={theme}>
-      <ErrorBoundary render={<h1>Oops something went wrong</h1>}>
-        <I18nProvider locale={props.language ? props.language : LOCALES.FINNISH}>
-          <SnackbarProvider maxSnack={3}>
-            <CssBaseline />
-            <div className="App">
-              <KeyFigureServiceProvider>
-                <KeyFigurePage />
-              </KeyFigureServiceProvider>
-            </div>
-          </SnackbarProvider>
-        </I18nProvider>
-      </ErrorBoundary>
+      <StylesProvider injectFirst>
+        <ErrorBoundary render={<h1>Oops something went wrong</h1>}>
+          <I18nProvider locale={props.language ? props.language : LOCALES.FINNISH}>
+            <SnackbarProvider maxSnack={3}>
+              <CssBaseline />
+              <div className="App">
+                <KeyFigureServiceProvider>
+                  <KeyFigurePage />
+                </KeyFigureServiceProvider>
+              </div>
+            </SnackbarProvider>
+          </I18nProvider>
+        </ErrorBoundary>
+      </StylesProvider>
     </ThemeProvider>
   );
 };

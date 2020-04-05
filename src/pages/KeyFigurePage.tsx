@@ -6,6 +6,7 @@ import { useKeyFigureService } from "../services/KeyFigureServiceProvider";
 import { Municipality } from "../model/municipalitiesDto";
 import FormHeader from "../components/formHeader/FormHeader";
 import { keyFigureReducer } from "./KeyFigureReducer";
+import Population from "../components/population/Population";
 
 interface Props {}
 
@@ -56,6 +57,13 @@ const KeyFigurePage: React.FC<Props> = props => {
         <FormattedMessage id="app-name" defaultMessage="Kuntien avainluvut" />
       </h1>
       <FormHeader municipalities={state.municipalities} onSubmit={municipalityFormHander} />
+
+      {state.primaryMuncipality && (
+        <Population
+          primaryPopulation={state.primaryMuncipality.population}
+          secondaryPopulation={state?.secondaryMuncipality?.population}
+        />
+      )}
     </>
   );
 };
