@@ -19,6 +19,7 @@
     "react-dom": "^16.13.0",
     "react-intl": "^3.12.1",
     "react-scripts": "3.4.0",
+    "styled-components": "^5.0.1",
     "typescript": "^3.7.5"
   },
   "scripts": {
@@ -41,5 +42,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "babel-plugin-styled-components": "^1.10.7"
   }
 }
