@@ -1,23 +1,14 @@
-import React, { useEffect } from "react";
-import { FormattedMessage } from "react-intl";
+import React, { useState } from "react";
+import { useIntl } from "react-intl";
 import FormControl from "@material-ui/core/FormControl";
-import InputLabel from "@material-ui/core/InputLabel";
-import Select from "@material-ui/core/Select";
 import Grid from "@material-ui/core/Grid";
-import { makeStyles, Theme, createStyles, FormHelperText } from "@material-ui/core";
+import { makeStyles, Theme, createStyles, NativeSelect, Button } from "@material-ui/core";
 
-import { RegionalZone } from "../../model/regionalZone";
 import { Municipality } from "../../model/municipalitiesDto";
 
 interface Props {
-  regionalZones: RegionalZone[];
   municipalities: Municipality[];
-  zoneChangeHandler: (value: string) => void;
-  primaryMuncipalityHandler: (value: string) => void;
-  secondaryMuncipalityHandler: (value: string) => void;
-  selectedZone?: RegionalZone;
-  selectedPrimaryMuncipality?: Municipality;
-  selectedSecondaryMuncipality?: Municipality;
+  onSubmit: (primaryMunicipality?: Municipality, secondaryMunicipality?: Municipality) => void;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -25,140 +16,137 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       flexGrow: 1
     },
+    formControlContainer: {
+      flexDirection: "column",
+      margin: "16px 24px",
+      flex: 0,
+      minWidth: "fit-content"
+    },
+    formInputContainer: {
+      display: "flex",
+      flexWrap: "wrap",
+      alignItems: "baseline",
+      margin: "8px 0"
+    },
+    formLabel: {
+      minWidth: 200,
+      textAlign: "start"
+    },
     formControl: {
       margin: theme.spacing(1),
-      minWidth: 120,
-      maxWidth: 300,
       display: "flex",
+      minWidth: 300,
       flexGrow: 1
     }
   })
 );
 
-const FormHeader: React.FC<Props> = ({
-  regionalZones,
-  municipalities,
-  zoneChangeHandler,
-  primaryMuncipalityHandler,
-  secondaryMuncipalityHandler,
-  selectedZone,
-  selectedPrimaryMuncipality,
-  selectedSecondaryMuncipality
-}) => {
+const FormHeader: React.FC<Props> = ({ municipalities, onSubmit }) => {
   const classes = useStyles();
+  const intl = useIntl();
 
-  // Side effect for selecting default values for the form
-  useEffect(() => {
-    if (municipalities.length > 0) {
-      if (!selectedPrimaryMuncipality) {
-        primaryMuncipalityHandler(municipalities[0].id);
-      } else {
-        const selected = municipalities.find(mun => mun.id === selectedPrimaryMuncipality.id);
-        selected
-          ? primaryMuncipalityHandler(selected.id)
-          : primaryMuncipalityHandler(municipalities[0].id);
-      }
+  const [primaryMunicipality, setPrimaryMunicipality] = useState<Municipality>();
+  const [secondaryMunicipality, setSecondaryMunicipality] = useState<Municipality>();
 
-      if (selectedSecondaryMuncipality) {
-        const selected = municipalities.find(mun => mun.id === selectedSecondaryMuncipality.id);
-        selected ? secondaryMuncipalityHandler(selected.id) : secondaryMuncipalityHandler("");
-      }
-    }
-  }, [
-    municipalities,
-    primaryMuncipalityHandler,
-    secondaryMuncipalityHandler,
-    selectedPrimaryMuncipality,
-    selectedSecondaryMuncipality
-  ]);
+  const formSubmitHandler = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    onSubmit(primaryMunicipality, secondaryMunicipality);
+  };
 
   return (
     <section className={classes.root}>
-      <form>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <FormControl className={classes.formControl}>
-              <InputLabel id="regional-zone-label" htmlFor="regional-zone-select" shrink>
-                <FormattedMessage id="regional-time-period" defaultMessage="Aluejako" />
-              </InputLabel>
-              <Select
-                native
-                id="regional-zone-select"
-                value={selectedZone?.id}
-                onChange={event => zoneChangeHandler(event.target.value as string)}
+      <form onSubmit={formSubmitHandler}>
+        <Grid container spacing={2} style={{ justifyContent: "center" }}>
+          <Grid item xs={12} sm={10} md={8} className={classes.formControlContainer}>
+            <div className={classes.formInputContainer}>
+              <label
+                className={classes.formLabel}
+                id="primaySelectLabel"
+                htmlFor="primaryZoneSelect"
               >
-                {regionalZones.map(zone => {
-                  return (
-                    <option key={zone.id} value={zone.id}>
-                      {zone.text}
-                    </option>
-                  );
-                })}
-              </Select>
-              <FormHelperText>
-                <FormattedMessage
-                  id="regional-time-period-helper"
-                  defaultMessage="Valitse käytettävä aluejako"
-                />
-              </FormHelperText>
-            </FormControl>
-          </Grid>
-          <Grid item xs={6}>
-            <FormControl className={classes.formControl}>
-              <InputLabel id="primary-zone-label" htmlFor="primary-zone-select" shrink>
-                <FormattedMessage id="primary-region" defaultMessage="Ensisijainen alue" />
-              </InputLabel>
-              <Select
-                native
-                id="primary-zone-select"
-                value={selectedPrimaryMuncipality?.id}
-                onChange={event => primaryMuncipalityHandler(event.target.value as string)}
-                displayEmpty={true}
+                Valitse ensisijainen kunta
+              </label>
+              <FormControl className={classes.formControl}>
+                <NativeSelect
+                  name="primaryMunicipality"
+                  id="primaryMunicipality"
+                  value={primaryMunicipality ? primaryMunicipality.id : ""}
+                  onChange={event => {
+                    setPrimaryMunicipality(
+                      municipalities.find(municipality => municipality.id === event.target.value)
+                    );
+                  }}
+                >
+                  <option value="" disabled>
+                    {intl.formatMessage({
+                      id: "primary-region",
+                      defaultMessage: "Ensisijainen alue"
+                    })}
+                  </option>
+                  {municipalities.map(municipality => {
+                    return (
+                      <option
+                        key={municipality.id}
+                        value={municipality.id}
+                        disabled={municipality.id === secondaryMunicipality?.id}
+                      >
+                        {municipality.name}
+                      </option>
+                    );
+                  })}
+                </NativeSelect>
+              </FormControl>
+            </div>
+            <div className={classes.formInputContainer}>
+              <label
+                className={classes.formLabel}
+                id="secondary-select-label"
+                htmlFor="secondary-zone-select"
               >
-                {municipalities.map(municipality => {
-                  return (
-                    <option key={municipality.id} value={municipality.id}>
-                      {municipality.name}
-                    </option>
-                  );
-                })}
-              </Select>
-              <FormHelperText>
-                <FormattedMessage
-                  id="primary-region-helper"
-                  defaultMessage="Valitse ensisijainen alue"
-                />
-              </FormHelperText>
-            </FormControl>
-          </Grid>
-          <Grid item xs={6}>
-            <FormControl className={classes.formControl}>
-              <InputLabel id="secondary-zone-label" htmlFor="secondary-zone-select" shrink>
-                <FormattedMessage id="secondary-region" defaultMessage="Vertailtava alue" />
-              </InputLabel>
-              <Select
-                native
-                id="secondary-zone-select"
-                value={selectedSecondaryMuncipality?.id}
-                onChange={event => secondaryMuncipalityHandler(event.target.value as string)}
-                displayEmpty={true}
+                Valitse vertailtava kunta
+              </label>
+              <FormControl className={classes.formControl}>
+                <NativeSelect
+                  id="secondary-zone-select"
+                  name="secondary-municipality"
+                  onChange={event => {
+                    setSecondaryMunicipality(
+                      municipalities.find(municipality => municipality.id === event.target.value)
+                    );
+                  }}
+                  value={secondaryMunicipality ? secondaryMunicipality.id : ""}
+                >
+                  <option value="" disabled>
+                    {intl.formatMessage({
+                      id: "secondary-region",
+                      defaultMessage: "Valitse vertailtava alue"
+                    })}
+                  </option>
+                  {municipalities.map(municipality => {
+                    return (
+                      <option
+                        key={municipality.id}
+                        value={municipality.id}
+                        disabled={municipality.id === primaryMunicipality?.id}
+                      >
+                        {municipality.name}
+                      </option>
+                    );
+                  })}
+                </NativeSelect>
+              </FormControl>
+            </div>
+            <div style={{ alignSelf: "start", display: "flex" }}>
+              <Button
+                size="large"
+                type="submit"
+                variant="contained"
+                color="primary"
+                style={{ borderRadius: "24px" }}
               >
-                <option value=""></option> {/** Default empty value */}
-                {municipalities.map(municipality => {
-                  return (
-                    <option key={municipality.id} value={municipality.id}>
-                      {municipality.name}
-                    </option>
-                  );
-                })}
-              </Select>
-              <FormHelperText>
-                <FormattedMessage
-                  id="secondary-region-helper"
-                  defaultMessage="Valitse vertailtava alue"
-                />
-              </FormHelperText>
-            </FormControl>
+                Näytä kunnan luvut
+              </Button>
+            </div>
           </Grid>
         </Grid>
       </form>

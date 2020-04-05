@@ -3,6 +3,8 @@ import axios from "axios";
 import { RegionalZone } from "../model/regionalZone";
 import { Municipality, MunicipalitiesDto } from "../model/municipalitiesDto";
 import { KeyFigure, KeyFiguresDto } from "../model/keyFigureDto";
+import { PopulationDto, PopulationDataset } from '../model/populationDto';
+import { MunicipalityData } from "../model/municipalityData";
 
 export class KeyFigureService {
   async getRegionalZones(): Promise<RegionalZone[]> {
@@ -68,5 +70,52 @@ export class KeyFigureService {
           }
         );
       });
+  }
+
+  async getPopulation(municipality: Municipality) {
+    return axios.post<PopulationDto>("https://pxnet2.stat.fi:443/PXWeb/api/v1/fi/Kuntien_avainluvut/2020/laaja_alueaikasarjat.px",
+      {
+        query: [
+          {
+            code: "Alue 2020",
+            selection: {
+              filter: "item",
+              values: [
+                municipality.id
+              ]
+            }
+          },
+          {
+            code: "Tiedot",
+            selection: {
+              filter: "item",
+              values: [
+                "M411" // Key for population
+              ]
+            }
+          }
+        ],
+        response: {
+          format: "json-stat"
+        }
+      })
+      .then(response => {
+        const populationData = Object.keys(response.data.dataset.dimension.Vuosi.category.index).map((year, index) => {
+          return {
+            year,
+            population: response.data.dataset.value[index]
+          }
+        })
+        return new PopulationDataset(municipality.id, municipality.name, populationData)
+      })
+  }
+
+  async getMunicipalityData(municipality: Municipality): Promise<MunicipalityData> {
+    return axios.all([this.getPopulation(municipality)])
+      .then(axios.spread((population) => {
+        return {
+          population: population
+        }
+      }))
   }
 }
