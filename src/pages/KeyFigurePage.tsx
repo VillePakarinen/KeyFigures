@@ -8,6 +8,8 @@ import FormHeader from "../components/formHeader/FormHeader";
 import { keyFigureReducer } from "./KeyFigureReducer";
 import Population from "../components/population/Population";
 import { useQuery } from "react-query";
+import { MunicipalityData } from "../model/municipalityData";
+import { PopulationDataset } from "../model/populationDto";
 
 interface Props {}
 
@@ -64,12 +66,14 @@ const KeyFigurePage: React.FC<Props> = (props) => {
         onSubmit={municipalityFormHander}
       />
 
-      {(primaryMunicipalityResponse.data || secondaryMunicipalityResponse.data) && (
-        <Population
-          primaryPopulation={primaryMunicipalityResponse.data?.population}
-          secondaryPopulation={secondaryMunicipalityResponse.data?.population}
-        />
-      )}
+      <Population
+        populationDataSets={
+          [
+            primaryMunicipalityResponse.data?.population,
+            secondaryMunicipalityResponse.data?.population,
+          ].filter((val) => val !== undefined) as PopulationDataset[]
+        }
+      />
     </>
   );
 };

@@ -6,108 +6,67 @@ import Wrapper from "../wrapper/Wrapper";
 import { PopulationDataset } from "../../model/populationDto";
 
 interface Props {
-  primaryPopulation?: PopulationDataset;
-  secondaryPopulation?: PopulationDataset;
+  populationDataSets: PopulationDataset[];
 }
 
-const Population: React.FC<Props> = ({ primaryPopulation, secondaryPopulation }) => {
-  const data = primaryPopulation?.populationData.map((pdata, index) => {
-    let secondaryData;
-
-    if (secondaryPopulation) {
-      secondaryData = {
-        [secondaryPopulation.zoneName]: secondaryPopulation.populationData[index].population,
-      };
-    }
-    return {
-      year: pdata.year,
-      [primaryPopulation.zoneName]: pdata.population,
-      ...secondaryData,
-    };
-  });
+const Population: React.FC<Props> = ({ populationDataSets }) => {
+  if (!populationDataSets.length) return null;
 
   return (
     <Wrapper backgroundcolor="rgb(255, 212, 120);">
       <h1>Population</h1>
       <Grid container spacing={2}>
-        <Grid item xs={6}>
-          {primaryPopulation && (
-            <div
-              style={{
-                margin: "16px",
-                borderRadius: "24px",
-                backgroundColor: "#fff",
-                minHeight: "48px",
-                display: "flex",
-                justifyContent: "center",
-                flexDirection: "column",
-                padding: "16px",
-              }}
-            >
-              <span style={{ fontSize: "24px", fontWeight: "bold" }}>
-                {primaryPopulation?.zoneName}
-              </span>
-              <span style={{ fontSize: "18px" }}>
-                {
-                  primaryPopulation.populationData[primaryPopulation.populationData.length - 1]
-                    .population
-                }
-              </span>
-            </div>
-          )}
-        </Grid>
-        <Grid item xs={6}>
-          {secondaryPopulation && (
-            <div
-              style={{
-                margin: "16px",
-                borderRadius: "24px",
-                backgroundColor: "#fff",
-                minHeight: "48px",
-                display: "flex",
-                justifyContent: "center",
-                flexDirection: "column",
-                padding: "16px",
-              }}
-            >
-              <span style={{ fontSize: "24px", fontWeight: "bold" }}>
-                {secondaryPopulation?.zoneName}
-              </span>
-              <span style={{ fontSize: "18px" }}>
-                {
-                  secondaryPopulation?.populationData[
-                    secondaryPopulation?.populationData.length - 1
-                  ].population
-                }
-              </span>
-            </div>
-          )}
-        </Grid>
+        {populationDataSets.map((dataset) => {
+          return (
+            <Grid key={dataset.zoneId} item xs={6}>
+              <div
+                style={{
+                  margin: "16px",
+                  borderRadius: "24px",
+                  backgroundColor: "#fff",
+                  minHeight: "48px",
+                  display: "flex",
+                  justifyContent: "center",
+                  flexDirection: "column",
+                  padding: "16px",
+                }}
+              >
+                <span style={{ fontSize: "24px", fontWeight: "bold" }}>{dataset.zoneName}</span>
+                <span style={{ fontSize: "18px" }}>
+                  {dataset.populationData[dataset.populationData.length - 1].population}
+                </span>
+              </div>
+            </Grid>
+          );
+        })}
         <Grid item xs={12}>
           <ResponsiveContainer width="100%" minHeight="300px" minWidth="300px">
-            <LineChart data={data}>
-              <XAxis dataKey="year" minTickGap={10} />
+            <LineChart>
               <YAxis />
+              <XAxis
+                minTickGap={10}
+                dataKey="year"
+                xAxisId="year"
+                allowDuplicatedCategory={false}
+              />
+              >
               <Legend />
               <Tooltip />
-              {primaryPopulation && (
-                <Line
-                  type="monotone"
-                  strokeWidth="3"
-                  dataKey={primaryPopulation.zoneName}
-                  stroke="#8884d8"
-                  dot={false}
-                />
-              )}
-
-              {secondaryPopulation && (
-                <Line
-                  type="monotone"
-                  strokeWidth="3"
-                  dataKey={secondaryPopulation.zoneName}
-                  dot={false}
-                  stroke="#000"
-                />
+              {populationDataSets.map((dataset) => {
+                return (
+                  <Line
+                    key={dataset.zoneId}
+                    type="monotone"
+                    strokeWidth="3"
+                    stroke="#8884d8"
+                    dot={false}
+                    data={dataset.populationData}
+                    name={dataset.zoneName}
+                    dataKey="population"
+                    xAxisId="year"
+                  />
+                );
+              })}
               )}
             </LineChart>
           </ResponsiveContainer>
