@@ -8,38 +8,39 @@ import Wrapper from "../wrapper/Wrapper";
 
 interface Props {
   municipalities: Municipality[];
+  isLoading: boolean;
   onSubmit: (primaryMunicipality?: Municipality, secondaryMunicipality?: Municipality) => void;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      flexGrow: 1
+      flexGrow: 1,
     },
     formControlContainer: {
       flexDirection: "column",
-      margin: "16px 24px"
+      margin: "16px 24px",
     },
     formInputContainer: {
       display: "flex",
       flexWrap: "wrap",
       alignItems: "baseline",
-      margin: "8px 0"
+      margin: "8px 0",
     },
     formLabel: {
       minWidth: 200,
-      textAlign: "start"
+      textAlign: "start",
     },
     formControl: {
       margin: theme.spacing(1),
       display: "flex",
       minWidth: 300,
-      flexGrow: 1
-    }
+      flexGrow: 1,
+    },
   })
 );
 
-const FormHeader: React.FC<Props> = ({ municipalities, onSubmit }) => {
+const FormHeader: React.FC<Props> = ({ municipalities, onSubmit, isLoading }) => {
   const classes = useStyles();
   const intl = useIntl();
 
@@ -64,19 +65,19 @@ const FormHeader: React.FC<Props> = ({ municipalities, onSubmit }) => {
                 name="primaryMunicipality"
                 id="primaryMunicipality"
                 value={primaryMunicipality ? primaryMunicipality.id : ""}
-                onChange={event => {
+                onChange={(event) => {
                   setPrimaryMunicipality(
-                    municipalities.find(municipality => municipality.id === event.target.value)
+                    municipalities.find((municipality) => municipality.id === event.target.value)
                   );
                 }}
               >
                 <option value="" disabled>
                   {intl.formatMessage({
                     id: "primary-region",
-                    defaultMessage: "Ensisijainen alue"
+                    defaultMessage: "Ensisijainen alue",
                   })}
                 </option>
-                {municipalities.map(municipality => {
+                {municipalities.map((municipality) => {
                   return (
                     <option
                       key={municipality.id}
@@ -102,9 +103,9 @@ const FormHeader: React.FC<Props> = ({ municipalities, onSubmit }) => {
               <NativeSelect
                 id="secondary-zone-select"
                 name="secondary-municipality"
-                onChange={event => {
+                onChange={(event) => {
                   setSecondaryMunicipality(
-                    municipalities.find(municipality => municipality.id === event.target.value)
+                    municipalities.find((municipality) => municipality.id === event.target.value)
                   );
                 }}
                 value={secondaryMunicipality ? secondaryMunicipality.id : ""}
@@ -112,10 +113,10 @@ const FormHeader: React.FC<Props> = ({ municipalities, onSubmit }) => {
                 <option value="" disabled>
                   {intl.formatMessage({
                     id: "secondary-region",
-                    defaultMessage: "Valitse vertailtava alue"
+                    defaultMessage: "Valitse vertailtava alue",
                   })}
                 </option>
-                {municipalities.map(municipality => {
+                {municipalities.map((municipality) => {
                   return (
                     <option
                       key={municipality.id}
@@ -131,6 +132,7 @@ const FormHeader: React.FC<Props> = ({ municipalities, onSubmit }) => {
           </div>
           <div style={{ alignSelf: "start", display: "flex" }}>
             <Button
+              disabled={isLoading}
               size="large"
               type="submit"
               variant="contained"

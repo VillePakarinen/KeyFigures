@@ -110,7 +110,10 @@ export class KeyFigureService {
       })
   }
 
-  async getMunicipalityData(municipality: Municipality): Promise<MunicipalityData> {
+  async getMunicipalityData(municipality?: Municipality): Promise<MunicipalityData> {
+    if (municipality === undefined) {
+      return Promise.reject("Municipality not defined")
+    }
     return axios.all([this.getPopulation(municipality)])
       .then(axios.spread((population) => {
         return {

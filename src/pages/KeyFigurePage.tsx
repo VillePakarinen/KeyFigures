@@ -7,15 +7,15 @@ import { Municipality } from "../model/municipalitiesDto";
 import FormHeader from "../components/formHeader/FormHeader";
 import { keyFigureReducer } from "./KeyFigureReducer";
 import Population from "../components/population/Population";
+import { useQuery } from "react-query";
 
 interface Props {}
 
-const KeyFigurePage: React.FC<Props> = props => {
+const KeyFigurePage: React.FC<Props> = (props) => {
   // Initialize state
   const [state, dispatch] = useReducer(keyFigureReducer, {
     primaryMuncipality: null,
     secondaryMuncipality: null,
-    municipalities: []
   });
 
   // Initialize dependencies
@@ -24,44 +24,50 @@ const KeyFigurePage: React.FC<Props> = props => {
 
   const municipalityFormHander = useCallback(
     (primaryMunicipality?: Municipality, secondaryMunicipality?: Municipality) => {
-      if (primaryMunicipality) {
-        keyFigureService
-          .getMunicipalityData(primaryMunicipality)
-          .then(data => dispatch({ type: "SET_PRIMARY_MUNICIPALITY_DATA", payload: data }));
-      }
-
-      if (secondaryMunicipality) {
-        keyFigureService
-          .getMunicipalityData(secondaryMunicipality)
-          .then(data => dispatch({ type: "SET_SECONDARY_MUNICIPALITY_DATA", payload: data }));
-      }
+      dispatch({ type: "SET_PRIMARY_MUNICIPALITY", payload: primaryMunicipality || null });
+      dispatch({ type: "SET_SECONDARY_MUNICIPALITY", payload: secondaryMunicipality || null });
     },
     [keyFigureService]
   );
 
-  useEffect(() => {
-    keyFigureService
-      .getMunicipalities("2020")
-      .then(municipalities => {
-        dispatch({
-          type: "SET_MUNICIPALITIES",
-          payload: municipalities
-        });
-      })
-      .catch(err => enqueueSnackbar("Something went wrong with fetching municipalities"));
-  }, [keyFigureService, enqueueSnackbar]);
+  // async calls
+  const municipalitiesResponse = useQuery("municipalities", () =>
+    keyFigureService.getMunicipalities("2020")
+  );
+  if (municipalitiesResponse.error) {
+    enqueueSnackbar("Something went wrong with fetching municipalities");
+  }
+
+  const primaryMunicipalityResponse = useQuery(
+    state.primaryMuncipality && ["primary-muncipality", state.primaryMuncipality.id],
+    () => keyFigureService.getMunicipalityData(state.primaryMuncipality || undefined)
+  );
+
+  const secondaryMunicipalityResponse = useQuery(
+    state.secondaryMuncipality && ["secondary-muncipality", state.secondaryMuncipality.id],
+    () => keyFigureService.getMunicipalityData(state.secondaryMuncipality || undefined)
+  );
+
+  const isLoading =
+    municipalitiesResponse.status === "loading" ||
+    primaryMunicipalityResponse.status === "loading" ||
+    secondaryMunicipalityResponse.status === "loading";
 
   return (
     <>
       <h1>
         <FormattedMessage id="app-name" defaultMessage="Kuntien avainluvut" />
       </h1>
-      <FormHeader municipalities={state.municipalities} onSubmit={municipalityFormHander} />
+      <FormHeader
+        isLoading={isLoading}
+        municipalities={municipalitiesResponse.data || []}
+        onSubmit={municipalityFormHander}
+      />
 
-      {state.primaryMuncipality && (
+      {(primaryMunicipalityResponse.data || secondaryMunicipalityResponse.data) && (
         <Population
-          primaryPopulation={state.primaryMuncipality.population}
-          secondaryPopulation={state?.secondaryMuncipality?.population}
+          primaryPopulation={primaryMunicipalityResponse.data?.population}
+          secondaryPopulation={secondaryMunicipalityResponse.data?.population}
         />
       )}
     </>

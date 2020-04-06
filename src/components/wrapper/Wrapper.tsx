@@ -10,15 +10,14 @@ interface Props {
 }
 
 const StyledWrapper = styled(Grid)<Props>`
-  height: ${props => (props.height ? props.height : "initial")};
+  height: ${(props) => (props.height ? props.height : "initial")};
   display: flex;
   justify-content: center;
   padding: 32px 16px;
-  background: ${props => (props.backgroundcolor ? props.backgroundcolor : "transparent")};
+  background: ${(props) => (props.backgroundcolor ? props.backgroundcolor : "transparent")};
 `;
 
 const Wrapper = (props: Props) => {
-  console.log(props);
   return (
     <StyledWrapper {...props}>
       <Grid item xs={12} sm={8} md={6}>

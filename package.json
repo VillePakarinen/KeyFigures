@@ -18,7 +18,9 @@
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "react-intl": "^3.12.1",
+    "react-query": "^1.2.1",
     "react-scripts": "3.4.0",
+    "recharts": "^1.8.5",
     "styled-components": "^5.0.1",
     "typescript": "^3.7.5"
   },
@@ -44,6 +46,8 @@
     ]
   },
   "devDependencies": {
+    "@types/react-query": "^1.1.1",
+    "@types/recharts": "^1.8.9",
     "@types/styled-components": "^5.0.1",
     "babel-plugin-styled-components": "^1.10.7"
   }
