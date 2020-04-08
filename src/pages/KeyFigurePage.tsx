@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useReducer } from "react";
+import React, { useCallback, useReducer, useMemo } from "react";
 import { FormattedMessage } from "react-intl";
 import { useSnackbar } from "notistack";
 
@@ -7,9 +7,8 @@ import { Municipality } from "../model/municipalitiesDto";
 import FormHeader from "../components/formHeader/FormHeader";
 import { keyFigureReducer } from "./KeyFigureReducer";
 import Population from "../components/population/Population";
-import { useQuery } from "react-query";
+import { useQuery, usePaginatedQuery } from "react-query";
 import { MunicipalityData } from "../model/municipalityData";
-import { PopulationDataset } from "../model/populationDto";
 
 interface Props {}
 
@@ -29,7 +28,7 @@ const KeyFigurePage: React.FC<Props> = (props) => {
       dispatch({ type: "SET_PRIMARY_MUNICIPALITY", payload: primaryMunicipality || null });
       dispatch({ type: "SET_SECONDARY_MUNICIPALITY", payload: secondaryMunicipality || null });
     },
-    [keyFigureService]
+    []
   );
 
   // async calls
@@ -40,20 +39,30 @@ const KeyFigurePage: React.FC<Props> = (props) => {
     enqueueSnackbar("Something went wrong with fetching municipalities");
   }
 
-  const primaryMunicipalityResponse = useQuery(
-    state.primaryMuncipality && ["primary-muncipality", state.primaryMuncipality.id],
+  const primaryMunicipalityResponse = usePaginatedQuery(
+    state.primaryMuncipality && ["muncipality", state.primaryMuncipality.id],
     () => keyFigureService.getMunicipalityData(state.primaryMuncipality || undefined)
   );
 
-  const secondaryMunicipalityResponse = useQuery(
-    state.secondaryMuncipality && ["secondary-muncipality", state.secondaryMuncipality.id],
+  const secondaryMunicipalityResponse = usePaginatedQuery(
+    state.secondaryMuncipality && ["muncipality", state.secondaryMuncipality.id],
     () => keyFigureService.getMunicipalityData(state.secondaryMuncipality || undefined)
   );
 
+  // Derived values
   const isLoading =
     municipalitiesResponse.status === "loading" ||
     primaryMunicipalityResponse.status === "loading" ||
     secondaryMunicipalityResponse.status === "loading";
+
+  const muncipalityData = useMemo(() => {
+    return [
+      primaryMunicipalityResponse.resolvedData,
+      secondaryMunicipalityResponse.resolvedData,
+    ].filter((pData) => pData !== undefined) as MunicipalityData[];
+  }, [primaryMunicipalityResponse.resolvedData, secondaryMunicipalityResponse.resolvedData]);
+
+  console.log(muncipalityData);
 
   return (
     <>
@@ -66,14 +75,7 @@ const KeyFigurePage: React.FC<Props> = (props) => {
         onSubmit={municipalityFormHander}
       />
 
-      <Population
-        populationDataSets={
-          [
-            primaryMunicipalityResponse.data?.population,
-            secondaryMunicipalityResponse.data?.population,
-          ].filter((val) => val !== undefined) as PopulationDataset[]
-        }
-      />
+      <Population populationDataSets={muncipalityData.map((data) => data.population)} />
     </>
   );
 };

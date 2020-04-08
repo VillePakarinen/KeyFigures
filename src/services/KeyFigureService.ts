@@ -2,8 +2,8 @@ import axios from "axios";
 
 import { RegionalZone } from "../model/regionalZone";
 import { Municipality, MunicipalitiesDto } from "../model/municipalitiesDto";
-import { KeyFigure, KeyFiguresDto } from "../model/keyFigureDto";
-import { PopulationDto, PopulationDataset } from '../model/populationDto';
+import { KeyFigureDto } from "../model/keyFigureDto";
+import { PopulationDataset } from '../model/populationDataset';
 import { MunicipalityData } from "../model/municipalityData";
 
 export class KeyFigureService {
@@ -41,39 +41,9 @@ export class KeyFigureService {
       });
   }
 
-  async getMuncipalityKeyFigures(muncipality: Municipality): Promise<KeyFigure[]> {
-    return axios
-      .post<KeyFiguresDto>(
-        `https://pxnet2.stat.fi/PXWeb/api/v1/fi/Kuntien_avainluvut/${muncipality.getYear()}/kuntien_avainluvut_${muncipality.getYear()}_viimeisin.px`,
-        {
-          query: [
-            {
-              code: muncipality.code,
-              selection: {
-                filter: "item",
-                values: [muncipality.id]
-              }
-            }
-          ],
-          response: { format: "json-stat" }
-        }
-      )
-      .then(response => {
-        return Object.entries(response.data.dataset.dimension.Tiedot.category.label).map(
-          ([key, valueText], index): KeyFigure => {
-            return new KeyFigure(
-              key,
-              response.data.dataset.dimension.Tiedot.category.index[key],
-              valueText,
-              response.data.dataset.value[index]
-            );
-          }
-        );
-      });
-  }
 
   async getPopulation(municipality: Municipality) {
-    return axios.post<PopulationDto>("https://pxnet2.stat.fi:443/PXWeb/api/v1/fi/Kuntien_avainluvut/2020/laaja_alueaikasarjat.px",
+    return axios.post<KeyFigureDto>("https://pxnet2.stat.fi:443/PXWeb/api/v1/fi/Kuntien_avainluvut/2020/laaja_alueaikasarjat.px",
       {
         query: [
           {

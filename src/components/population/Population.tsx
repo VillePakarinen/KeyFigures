@@ -3,7 +3,7 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } f
 import { Grid } from "@material-ui/core";
 
 import Wrapper from "../wrapper/Wrapper";
-import { PopulationDataset } from "../../model/populationDto";
+import { PopulationDataset } from "../../model/populationDataset";
 
 interface Props {
   populationDataSets: PopulationDataset[];
