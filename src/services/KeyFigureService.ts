@@ -7,9 +7,12 @@ import { PopulationDataset } from '../model/populationDataset';
 import { MunicipalityData } from "../model/municipalityData";
 
 export class KeyFigureService {
+
+  constructor(public languageCode: string) { }
+
   async getRegionalZones(): Promise<RegionalZone[]> {
     return axios
-      .get<RegionalZone[]>("https://pxnet2.stat.fi/PXWeb/api/v1/fi/Kuntien_avainluvut/")
+      .get<RegionalZone[]>(`https://pxnet2.stat.fi/PXWeb/api/v1/${this.languageCode}/Kuntien_avainluvut/`)
       .then(response =>
         response.data.sort((a, b) => {
           return +b.id - +a.id;
@@ -20,7 +23,7 @@ export class KeyFigureService {
   async getMunicipalities(regionalId: string): Promise<Municipality[]> {
     return axios
       .get<MunicipalitiesDto>(
-        `https://pxnet2.stat.fi/PXWeb/api/v1/fi/Kuntien_avainluvut/${regionalId}/kuntien_avainluvut_${regionalId}_viimeisin.px`,
+        `https://pxnet2.stat.fi/PXWeb/api/v1/${this.languageCode}/Kuntien_avainluvut/${regionalId}/kuntien_avainluvut_${regionalId}_viimeisin.px`,
         { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
       )
       .then(response => {
@@ -43,7 +46,7 @@ export class KeyFigureService {
 
 
   async getPopulation(municipality: Municipality) {
-    return axios.post<KeyFigureDto>("https://pxnet2.stat.fi:443/PXWeb/api/v1/fi/Kuntien_avainluvut/2020/laaja_alueaikasarjat.px",
+    return axios.post<KeyFigureDto>(`https://pxnet2.stat.fi:443/PXWeb/api/v1/${this.languageCode}/Kuntien_avainluvut/2020/kuntien_avainluvut_2020_aikasarja.px`,
       {
         query: [
           {
