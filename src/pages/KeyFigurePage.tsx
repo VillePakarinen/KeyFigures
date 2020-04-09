@@ -1,13 +1,13 @@
 import React, { useCallback, useReducer, useMemo } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { useSnackbar } from "notistack";
+import { useQuery, usePaginatedQuery } from "react-query";
 
 import { useKeyFigureService } from "../services/KeyFigureServiceProvider";
 import { Municipality } from "../model/municipality";
 import FormHeader from "../components/formHeader/FormHeader";
 import { keyFigureReducer } from "./KeyFigureReducer";
 import Population from "../components/population/Population";
-import { useQuery, usePaginatedQuery } from "react-query";
 import { MunicipalityData } from "../model/municipalityData";
 
 interface Props {}

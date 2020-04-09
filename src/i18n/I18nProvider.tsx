@@ -22,11 +22,7 @@ const I18nProvider: React.FC<Props> = ({ locale, children }) => {
   }
 
   return (
-    <IntlProvider
-      locale={locale}
-      textComponent={Fragment}
-      messages={strings[locale]}
-    >
+    <IntlProvider locale={locale} key={locale} textComponent={Fragment} messages={strings[locale]}>
       {children}
     </IntlProvider>
   );

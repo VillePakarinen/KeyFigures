@@ -13,6 +13,8 @@ export default {
     "search-button": "Näytä kunnan avainluvut",
     "municipality-fetch-error": "Kuntien hakeminen epäonnistui",
     "keyfigure-fetch-error": "Avainlukujen hakeminen epäonnistui",
-    "loading-aria-text": "Ladataan"
+    "loading-aria-text": "Ladataan",
+    "population-header": "Väestö kunnassa"
+
   }
 };

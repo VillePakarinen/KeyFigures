@@ -16,11 +16,13 @@ interface Props {
 }
 
 const App = (props: Props) => {
+  const locale = props.language ? props.language : LOCALES.FINNISH;
+
   return (
     <ThemeProvider theme={theme}>
       <StylesProvider injectFirst>
         <ErrorBoundary render={<h1>Oops something went wrong</h1>}>
-          <I18nProvider locale={props.language ? props.language : LOCALES.FINNISH}>
+          <I18nProvider locale={locale}>
             <SnackbarProvider maxSnack={3}>
               <CssBaseline />
               <div className="App">

@@ -13,6 +13,7 @@ export default {
     "search-button": "Show keyfigures",
     "municipality-fetch-error": "Something went wrong while fetching municipalities",
     "keyfigure-fetch-error": "Something went wrong while fetching keyfigures",
-    "loading-aria-text": "Please wait"
+    "loading-aria-text": "Please wait",
+    "population-header": "Population in municipality"
   }
 };

@@ -13,6 +13,7 @@ export default {
     "search-button": "Visa kommunsiffor",
     "municipality-fetch-error": "Något gick fel när han hämtade kommuner",
     "keyfigure-fetch-error": "Något gick fel när han hämtade nyckeltal",
-    "loading-aria-text": "Vänta"
+    "loading-aria-text": "Vänta",
+    "population-header": "befolkning i kommum"
   }
 };

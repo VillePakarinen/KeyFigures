@@ -1,6 +1,7 @@
 import React from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { Grid } from "@material-ui/core";
+import { FormattedMessage } from "react-intl";
 
 import Wrapper from "../wrapper/Wrapper";
 import { PopulationDataset } from "../../model/populationDataset";
@@ -14,7 +15,9 @@ const Population: React.FC<Props> = ({ populationDataSets }) => {
 
   return (
     <Wrapper backgroundcolor="rgb(255, 212, 120);">
-      <h1>Population</h1>
+      <h1>
+        <FormattedMessage id="population-header" defaultMessage="Population in municipality" />
+      </h1>
       <Grid container spacing={2}>
         {populationDataSets.map((dataset) => {
           return (
