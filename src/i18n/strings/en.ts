@@ -9,6 +9,10 @@ export default {
     "primary-region": "Primary region",
     "primary-region-helper": "Select primary region",
     "secondary-region": "Secondary region",
-    "secondary-region-helper": "Select an area to compare to"
+    "secondary-region-helper": "Select an area to compare to",
+    "search-button": "Show keyfigures",
+    "municipality-fetch-error": "Something went wrong while fetching municipalities",
+    "keyfigure-fetch-error": "Something went wrong while fetching keyfigures",
+    "loading-aria-text": "Please wait"
   }
 };

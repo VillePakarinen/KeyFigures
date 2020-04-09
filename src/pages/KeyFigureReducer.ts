@@ -1,5 +1,5 @@
 
-import { Municipality } from '../model/municipalitiesDto';
+import { Municipality } from '../model/municipality';
 
 type Action =
     | { type: 'SET_PRIMARY_MUNICIPALITY', payload: Municipality | null }

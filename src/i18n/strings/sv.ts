@@ -9,6 +9,10 @@ export default {
     "primary-region": "Primärregionen",
     "primary-region-helper": "Välj primärregionen",
     "secondary-region": "Jämförelseområde",
-    "secondary-region-helper": "Välj ett område att jämföra"
+    "secondary-region-helper": "Välj ett område att jämföra",
+    "search-button": "Visa kommunsiffor",
+    "municipality-fetch-error": "Något gick fel när han hämtade kommuner",
+    "keyfigure-fetch-error": "Något gick fel när han hämtade nyckeltal",
+    "loading-aria-text": "Vänta"
   }
 };

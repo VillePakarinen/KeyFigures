@@ -1,9 +1,9 @@
 import React, { useCallback, useReducer, useMemo } from "react";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import { useSnackbar } from "notistack";
 
 import { useKeyFigureService } from "../services/KeyFigureServiceProvider";
-import { Municipality } from "../model/municipalitiesDto";
+import { Municipality } from "../model/municipality";
 import FormHeader from "../components/formHeader/FormHeader";
 import { keyFigureReducer } from "./KeyFigureReducer";
 import Population from "../components/population/Population";
@@ -20,9 +20,11 @@ const KeyFigurePage: React.FC<Props> = (props) => {
   });
 
   // Initialize dependencies
+  const intl = useIntl();
   const keyFigureService = useKeyFigureService();
   const { enqueueSnackbar } = useSnackbar();
 
+  // Callbacks
   const municipalityFormHander = useCallback(
     (primaryMunicipality?: Municipality, secondaryMunicipality?: Municipality) => {
       dispatch({ type: "SET_PRIMARY_MUNICIPALITY", payload: primaryMunicipality || null });
@@ -35,9 +37,6 @@ const KeyFigurePage: React.FC<Props> = (props) => {
   const municipalitiesResponse = useQuery("municipalities", () =>
     keyFigureService.getMunicipalities("2020")
   );
-  if (municipalitiesResponse.error) {
-    enqueueSnackbar("Something went wrong with fetching municipalities");
-  }
 
   const primaryMunicipalityResponse = usePaginatedQuery(
     state.primaryMuncipality && ["muncipality", state.primaryMuncipality.id],
@@ -55,14 +54,30 @@ const KeyFigurePage: React.FC<Props> = (props) => {
     primaryMunicipalityResponse.status === "loading" ||
     secondaryMunicipalityResponse.status === "loading";
 
+  if (municipalitiesResponse.error) {
+    enqueueSnackbar(
+      intl.formatMessage({
+        id: "municipality-fetch-error",
+        defaultMessage: "Something went wrong while fetching municipalities",
+      })
+    );
+  }
+
+  if (primaryMunicipalityResponse.error || secondaryMunicipalityResponse.error) {
+    enqueueSnackbar(
+      intl.formatMessage({
+        id: "keyfigure-fetch-error",
+        defaultMessage: "Something went wrong while fetching key figures",
+      })
+    );
+  }
+
   const muncipalityData = useMemo(() => {
     return [
       primaryMunicipalityResponse.resolvedData,
       secondaryMunicipalityResponse.resolvedData,
     ].filter((pData) => pData !== undefined) as MunicipalityData[];
   }, [primaryMunicipalityResponse.resolvedData, secondaryMunicipalityResponse.resolvedData]);
-
-  console.log(muncipalityData);
 
   return (
     <>

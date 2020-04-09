@@ -1,9 +1,17 @@
 import React, { useState } from "react";
-import { useIntl } from "react-intl";
+import { useIntl, FormattedMessage } from "react-intl";
 import FormControl from "@material-ui/core/FormControl";
-import { makeStyles, Theme, createStyles, NativeSelect, Button } from "@material-ui/core";
+import {
+  makeStyles,
+  Theme,
+  createStyles,
+  NativeSelect,
+  Button,
+  CircularProgress,
+  Fade,
+} from "@material-ui/core";
 
-import { Municipality } from "../../model/municipalitiesDto";
+import { Municipality } from "../../model/municipality";
 import Wrapper from "../wrapper/Wrapper";
 
 interface Props {
@@ -139,8 +147,25 @@ const FormHeader: React.FC<Props> = ({ municipalities, onSubmit, isLoading }) =>
               color="primary"
               style={{ borderRadius: "24px" }}
             >
-              Näytä kunnan luvut
+              <FormattedMessage id="search-button" defaultMessage="Show Keyfigures" />
             </Button>
+
+            <Fade
+              unmountOnExit
+              in={isLoading}
+              timeout={{
+                enter: 1500,
+                exit: 500,
+              }}
+            >
+              <CircularProgress
+                style={{ padding: "8px", height: "100%" }}
+                aria-label={intl.formatMessage({
+                  id: "loading-aria-text",
+                  defaultMessage: "Please wait",
+                })}
+              />
+            </Fade>
           </div>
         </Wrapper>
       </form>

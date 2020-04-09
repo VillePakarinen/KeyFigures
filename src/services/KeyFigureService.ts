@@ -1,18 +1,20 @@
 import axios from "axios";
 
 import { RegionalZone } from "../model/regionalZone";
-import { Municipality, MunicipalitiesDto } from "../model/municipalitiesDto";
+import { MunicipalitiesDto } from "../model/municipalitiesDto";
 import { KeyFigureDto } from "../model/keyFigureDto";
 import { PopulationDataset } from '../model/populationDataset';
 import { MunicipalityData } from "../model/municipalityData";
+import { Municipality } from "../model/municipality";
+import { IntlShape } from "react-intl";
 
 export class KeyFigureService {
 
-  constructor(public languageCode: string) { }
+  constructor(private languageService: IntlShape) { }
 
   async getRegionalZones(): Promise<RegionalZone[]> {
     return axios
-      .get<RegionalZone[]>(`https://pxnet2.stat.fi/PXWeb/api/v1/${this.languageCode}/Kuntien_avainluvut/`)
+      .get<RegionalZone[]>(`https://pxnet2.stat.fi/PXWeb/api/v1/${this.languageService.locale}/Kuntien_avainluvut/`)
       .then(response =>
         response.data.sort((a, b) => {
           return +b.id - +a.id;
@@ -23,7 +25,7 @@ export class KeyFigureService {
   async getMunicipalities(regionalId: string): Promise<Municipality[]> {
     return axios
       .get<MunicipalitiesDto>(
-        `https://pxnet2.stat.fi/PXWeb/api/v1/${this.languageCode}/Kuntien_avainluvut/${regionalId}/kuntien_avainluvut_${regionalId}_viimeisin.px`,
+        `https://pxnet2.stat.fi/PXWeb/api/v1/${this.languageService.locale}/Kuntien_avainluvut/${regionalId}/kuntien_avainluvut_${regionalId}_viimeisin.px`,
         { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
       )
       .then(response => {
@@ -46,7 +48,7 @@ export class KeyFigureService {
 
 
   async getPopulation(municipality: Municipality) {
-    return axios.post<KeyFigureDto>(`https://pxnet2.stat.fi:443/PXWeb/api/v1/${this.languageCode}/Kuntien_avainluvut/2020/kuntien_avainluvut_2020_aikasarja.px`,
+    return axios.post<KeyFigureDto>(`https://pxnet2.stat.fi:443/PXWeb/api/v1/${this.languageService.locale}/Kuntien_avainluvut/2020/kuntien_avainluvut_2020_aikasarja.px`,
       {
         query: [
           {

@@ -14,6 +14,6 @@ export const useKeyFigureService = () => {
 
 export const KeyFigureServiceProvider = (props: any) => {
   const intl = useIntl();
-  const keyFigureService = useMemo(() => new KeyFigureService(intl.locale), [intl.locale]);
+  const keyFigureService = useMemo(() => new KeyFigureService(intl), [intl]);
   return <KeyFigureServiceContext.Provider value={keyFigureService} {...props} />;
 };

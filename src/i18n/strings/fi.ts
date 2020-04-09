@@ -9,6 +9,10 @@ export default {
     "primary-region": "Ensisijainen alue",
     "primary-region-helper": "Valitse ensisijainen alue",
     "secondary-region": "Vertailtava alue",
-    "secondary-region-helper": "Valitse vertailtava alue"
+    "secondary-region-helper": "Valitse vertailtava alue",
+    "search-button": "Näytä kunnan avainluvut",
+    "municipality-fetch-error": "Kuntien hakeminen epäonnistui",
+    "keyfigure-fetch-error": "Avainlukujen hakeminen epäonnistui",
+    "loading-aria-text": "Ladataan"
   }
 };
