@@ -62,9 +62,9 @@ const Population: React.FC<Props> = ({ populationDataSets }) => {
 
   return (
     <Wrapper backgroundcolor="rgb(255, 212, 120);">
-      <h1>
+      <h2>
         <FormattedMessage id="population-header" defaultMessage="Population in municipality" />
-      </h1>
+      </h2>
       <Grid container spacing={2}>
         {populationDataSets.map((dataset) => {
           return (

@@ -9,6 +9,7 @@ import FormHeader from "../components/formHeader/FormHeader";
 import { keyFigureReducer } from "./KeyFigureReducer";
 import Population from "../components/population/Population";
 import { MunicipalityData } from "../model/municipalityData";
+import Employment from "../components/employment/Employment";
 
 interface Props {}
 
@@ -89,8 +90,12 @@ const KeyFigurePage: React.FC<Props> = (props) => {
         municipalities={municipalitiesResponse.data || []}
         onSubmit={municipalityFormHander}
       />
-
-      <Population populationDataSets={muncipalityData.map((data) => data.population)} />
+      {muncipalityData.length > 0 && (
+        <>
+          <Population populationDataSets={muncipalityData.map((data) => data.population)} />
+          <Employment employmentDataSets={muncipalityData.map((data) => data.employmentRate)} />
+        </>
+      )}
     </>
   );
 };
