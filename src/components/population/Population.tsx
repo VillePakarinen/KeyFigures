@@ -1,5 +1,14 @@
 import React from "react";
-import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  LineType,
+} from "recharts";
 import { Grid } from "@material-ui/core";
 import { FormattedMessage } from "react-intl";
 
@@ -10,8 +19,46 @@ interface Props {
   populationDataSets: PopulationDataset[];
 }
 
+interface LineStyles {
+  color: string | number | undefined;
+  type?: LineType;
+}
+
+const lineStyles: LineStyles[] = [
+  {
+    color: "#0073b0",
+    type: "monotone",
+  },
+  {
+    color: "#000000",
+    type: "monotone",
+  },
+  {
+    color: "#8884d8",
+    type: "monotone",
+  },
+];
+
 const Population: React.FC<Props> = ({ populationDataSets }) => {
   if (!populationDataSets.length) return null;
+
+  const lines = populationDataSets.map((dataset, index) => {
+    // Loop though predefined styles and set them for each dataset item
+    const style = lineStyles[index % lineStyles.length];
+    return (
+      <Line
+        key={dataset.zoneId}
+        type={style.type}
+        strokeWidth="3"
+        stroke={style.color}
+        dot={false}
+        data={dataset.populationData}
+        name={dataset.zoneName}
+        dataKey="population"
+        xAxisId="year"
+      />
+    );
+  });
 
   return (
     <Wrapper backgroundcolor="rgb(255, 212, 120);">
@@ -55,22 +102,7 @@ const Population: React.FC<Props> = ({ populationDataSets }) => {
               >
               <Legend />
               <Tooltip />
-              {populationDataSets.map((dataset) => {
-                return (
-                  <Line
-                    key={dataset.zoneId}
-                    type="monotone"
-                    strokeWidth="3"
-                    stroke="#8884d8"
-                    dot={false}
-                    data={dataset.populationData}
-                    name={dataset.zoneName}
-                    dataKey="population"
-                    xAxisId="year"
-                  />
-                );
-              })}
-              )}
+              {lines}
             </LineChart>
           </ResponsiveContainer>
         </Grid>
