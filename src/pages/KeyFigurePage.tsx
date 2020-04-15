@@ -93,7 +93,10 @@ const KeyFigurePage: React.FC<Props> = (props) => {
       {muncipalityData.length > 0 && (
         <>
           <Population populationDataSets={muncipalityData.map((data) => data.population)} />
-          <Employment employmentDataSets={muncipalityData.map((data) => data.employmentRate)} />
+          <Employment
+            employmentDataSets={muncipalityData.map((data) => data.employmentRate)}
+            jobCountDataSets={muncipalityData.map((data) => data.jobCount)}
+          />
         </>
       )}
     </>

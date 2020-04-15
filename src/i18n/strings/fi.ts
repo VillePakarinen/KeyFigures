@@ -15,7 +15,10 @@ export default {
     "keyfigure-fetch-error": "Avainlukujen hakeminen epäonnistui",
     "loading-aria-text": "Ladataan",
     "population-header": "Väestö kunnassa",
-    "employment-rate-message": "{amount} on työpaikka"
+    "employment-heander": "Tietoa työllisyydestä",
+    "employment-rate-message": "{amount} on työpaikka",
+    "employment-job-count": "Työpaikkojen lukumäärä: {jobCount}"
+
 
   }
 };

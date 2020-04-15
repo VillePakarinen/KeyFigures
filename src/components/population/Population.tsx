@@ -1,7 +1,7 @@
 import React from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { Grid } from "@material-ui/core";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, FormattedNumber } from "react-intl";
 
 import Wrapper from "../layoutUtils/Wrapper";
 import { PopulationDataset } from "../../model/populationDataset";
@@ -47,7 +47,11 @@ const Population: React.FC<Props> = ({ populationDataSets }) => {
               <DisplayCard elevation={3} style={{ color: style.color }}>
                 <span style={{ fontSize: "24px", fontWeight: "bold" }}>{dataset.zoneName}</span>
                 <span style={{ fontSize: "18px" }}>
-                  {dataset.populationData[dataset.populationData.length - 1].population}
+                  <FormattedNumber
+                    value={
+                      dataset.populationData[dataset.populationData.length - 1].population || 0
+                    }
+                  />
                 </span>
               </DisplayCard>
             </Grid>

@@ -5,7 +5,7 @@ export interface VisualizationColor {
 
 export const VISUALIZATION_COLORS: VisualizationColor[] = [
   {
-    color: "#0073b0",
+    color: "#556cd6",
   },
   {
     color: "#000000",

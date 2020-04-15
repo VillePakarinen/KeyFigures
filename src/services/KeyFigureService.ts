@@ -8,6 +8,7 @@ import { PopulationDataset } from '../model/populationDataset';
 import { MunicipalityData } from "../model/municipalityData";
 import { Municipality } from "../model/municipality";
 import { IntlShape } from "react-intl";
+import { JobCountDataset } from '../model/jobCountDataset';
 
 export class KeyFigureService {
 
@@ -124,15 +125,54 @@ export class KeyFigureService {
       })
   }
 
+  async getJobCount(municipality: Municipality) {
+    return axios.post<KeyFigureDto>(`https://pxnet2.stat.fi:443/PXWeb/api/v1/${this.languageService.locale}/Kuntien_avainluvut/2020/kuntien_avainluvut_2020_aikasarja.px`, {
+      query: [
+        {
+          code: "Alue 2020",
+          selection: {
+            filter: "item",
+            values: [
+              municipality.id
+            ]
+          }
+        },
+        {
+          code: "Tiedot",
+          selection: {
+            filter: "item",
+            values: [
+              "M152" // Key for job count
+            ]
+          }
+        }
+      ],
+      response: {
+        format: "json-stat"
+      }
+    })
+      .then(response => {
+        const jobCountData = Object.keys(response.data.dataset.dimension.Vuosi.category.index).map((year, index) => {
+          return {
+            year,
+            jobCount: response.data.dataset.value[index]
+          }
+        })
+          .filter(emplData => emplData.jobCount !== null)
+        return new JobCountDataset(municipality.id, municipality.name, jobCountData)
+      })
+  }
+
   async getMunicipalityData(municipality?: Municipality): Promise<MunicipalityData> {
     if (municipality === undefined) {
       return Promise.reject("Municipality not defined")
     }
-    return axios.all<any>([this.getPopulation(municipality), this.getEmploymentRate(municipality)])
-      .then(axios.spread((population, employmentRate) => {
+    return axios.all<any>([this.getPopulation(municipality), this.getEmploymentRate(municipality), this.getJobCount(municipality)])
+      .then(axios.spread((population, employmentRate, jobCount) => {
         return {
           population: population,
-          employmentRate: employmentRate
+          employmentRate: employmentRate,
+          jobCount: jobCount
         }
       }))
   }

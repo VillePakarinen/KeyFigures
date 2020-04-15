@@ -15,6 +15,8 @@ export default {
     "keyfigure-fetch-error": "Något gick fel när han hämtade nyckeltal",
     "loading-aria-text": "Vänta",
     "population-header": "befolkning i kommum",
-    "employment-rate-message": "{amount} harr jobb"
+    "employment-header": "Information om sysselsättningen",
+    "employment-rate-message": "{amount} harr jobb",
+    "employment-job-count": "Antalet jobb: {jobCount}"
   }
 };
