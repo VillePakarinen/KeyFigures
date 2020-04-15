@@ -15,7 +15,7 @@ const Employment: React.FC<Props> = ({ employmentDataSets }) => {
   if (employmentDataSets.length === 0) return null;
 
   return (
-    <Wrapper backgroundcolor="rgb(255, 240, 185)">
+    <Wrapper backgroundcolor="#E6F4F1">
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <h2>Employment rate</h2>

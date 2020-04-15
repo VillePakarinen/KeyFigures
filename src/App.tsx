@@ -10,6 +10,7 @@ import ErrorBoundary from "./components/errorBoundary/ErrorBoundary";
 import theme from "./style/theme";
 import { KeyFigureServiceProvider } from "./services/KeyFigureServiceProvider";
 import KeyFigurePage from "./pages/KeyFigurePage";
+import QueryProvider from "./services/QueryProvider";
 
 interface Props {
   language?: string;
@@ -23,14 +24,16 @@ const App = (props: Props) => {
       <StylesProvider injectFirst>
         <ErrorBoundary render={<h1>Oops something went wrong</h1>}>
           <I18nProvider locale={locale}>
-            <SnackbarProvider maxSnack={3}>
-              <CssBaseline />
-              <div className="App">
-                <KeyFigureServiceProvider>
-                  <KeyFigurePage />
-                </KeyFigureServiceProvider>
-              </div>
-            </SnackbarProvider>
+            <QueryProvider>
+              <SnackbarProvider maxSnack={3}>
+                <CssBaseline />
+                <div className="App">
+                  <KeyFigureServiceProvider>
+                    <KeyFigurePage />
+                  </KeyFigureServiceProvider>
+                </div>
+              </SnackbarProvider>
+            </QueryProvider>
           </I18nProvider>
         </ErrorBoundary>
       </StylesProvider>

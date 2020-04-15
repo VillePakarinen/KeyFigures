@@ -34,7 +34,7 @@ const Population: React.FC<Props> = ({ populationDataSets }) => {
   });
 
   return (
-    <Wrapper backgroundcolor="rgb(255, 212, 120);">
+    <Wrapper backgroundcolor="#C7D1FF">
       <h2>
         <FormattedMessage id="population-header" defaultMessage="Population in municipality" />
       </h2>
