@@ -1,18 +1,11 @@
 import React from "react";
-import {
-  ResponsiveContainer,
-  BarChart,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-  Legend,
-  Bar,
-  Tooltip,
-} from "recharts";
 import { Grid } from "@material-ui/core";
 
-import Wrapper from "../wrapper/Wrapper";
+import Wrapper from "../layoutUtils/Wrapper";
 import { EmploymentRateDataset } from "../../model/employmentRateDataset";
+import DisplayCard from "../layoutUtils/DisplayCard";
+import { VISUALIZATION_COLORS } from "../../style/visualizationColors";
+import { FormattedMessage } from "react-intl";
 
 interface Props {
   employmentDataSets: EmploymentRateDataset[];
@@ -23,29 +16,29 @@ const Employment: React.FC<Props> = ({ employmentDataSets }) => {
 
   return (
     <Wrapper backgroundcolor="rgb(255, 240, 185)">
-      <h2>Employment rate</h2>
-
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <ResponsiveContainer width="100%" minHeight="300px" minWidth="300px">
-            <BarChart
-              data={employmentDataSets}
-              margin={{
-                top: 5,
-                right: 30,
-                left: 20,
-                bottom: 5,
-              }}
-            >
-              <CartesianGrid />
-              <XAxis dataKey="year" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="employmentRate" fill="#8884d8" />
-            </BarChart>
-          </ResponsiveContainer>
+          <h2>Employment rate</h2>
         </Grid>
+        {employmentDataSets.map((employmentData, index) => {
+          // Loop though predefined styles and set them for each dataset item
+          const style = VISUALIZATION_COLORS[index % VISUALIZATION_COLORS.length];
+          return (
+            <Grid key={employmentData.zoneId} item xs={6}>
+              <DisplayCard elevation={3} style={{ color: style.color }}>
+                <span style={{ fontSize: "24px", fontWeight: "bold" }}>
+                  {employmentData.zoneName}
+                </span>
+                <span>
+                  <FormattedMessage
+                    id="employment-rate-message"
+                    values={{ amount: `${employmentData.getLatestData()?.employmentRate}%` }}
+                  />
+                </span>
+              </DisplayCard>
+            </Grid>
+          );
+        })}
       </Grid>
     </Wrapper>
   );

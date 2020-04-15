@@ -14,6 +14,7 @@ export default {
     "municipality-fetch-error": "Något gick fel när han hämtade kommuner",
     "keyfigure-fetch-error": "Något gick fel när han hämtade nyckeltal",
     "loading-aria-text": "Vänta",
-    "population-header": "befolkning i kommum"
+    "population-header": "befolkning i kommum",
+    "employment-rate-message": "{amount} harr jobb"
   }
 };

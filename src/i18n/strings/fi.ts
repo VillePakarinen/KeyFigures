@@ -14,7 +14,8 @@ export default {
     "municipality-fetch-error": "Kuntien hakeminen epäonnistui",
     "keyfigure-fetch-error": "Avainlukujen hakeminen epäonnistui",
     "loading-aria-text": "Ladataan",
-    "population-header": "Väestö kunnassa"
+    "population-header": "Väestö kunnassa",
+    "employment-rate-message": "{amount} on työpaikka"
 
   }
 };

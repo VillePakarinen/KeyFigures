@@ -14,6 +14,7 @@ export default {
     "municipality-fetch-error": "Something went wrong while fetching municipalities",
     "keyfigure-fetch-error": "Something went wrong while fetching keyfigures",
     "loading-aria-text": "Please wait",
-    "population-header": "Population in municipality"
+    "population-header": "Population in municipality",
+    "employment-rate-message": "{amount} has a job"
   }
 };

@@ -1,54 +1,27 @@
 import React from "react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  LineType,
-} from "recharts";
+import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { Grid } from "@material-ui/core";
 import { FormattedMessage } from "react-intl";
 
-import Wrapper from "../wrapper/Wrapper";
+import Wrapper from "../layoutUtils/Wrapper";
 import { PopulationDataset } from "../../model/populationDataset";
+import { VISUALIZATION_COLORS } from "../../style/visualizationColors";
+import DisplayCard from "../layoutUtils/DisplayCard";
 
 interface Props {
   populationDataSets: PopulationDataset[];
 }
-
-interface LineStyles {
-  color: string | number | undefined;
-  type?: LineType;
-}
-
-const lineStyles: LineStyles[] = [
-  {
-    color: "#0073b0",
-    type: "monotone",
-  },
-  {
-    color: "#000000",
-    type: "monotone",
-  },
-  {
-    color: "#8884d8",
-    type: "monotone",
-  },
-];
 
 const Population: React.FC<Props> = ({ populationDataSets }) => {
   if (!populationDataSets.length) return null;
 
   const lines = populationDataSets.map((dataset, index) => {
     // Loop though predefined styles and set them for each dataset item
-    const style = lineStyles[index % lineStyles.length];
+    const style = VISUALIZATION_COLORS[index % VISUALIZATION_COLORS.length];
     return (
       <Line
         key={dataset.zoneId}
-        type={style.type}
+        type="monotone"
         strokeWidth="3"
         stroke={style.color}
         dot={false}
@@ -66,26 +39,17 @@ const Population: React.FC<Props> = ({ populationDataSets }) => {
         <FormattedMessage id="population-header" defaultMessage="Population in municipality" />
       </h2>
       <Grid container spacing={2}>
-        {populationDataSets.map((dataset) => {
+        {populationDataSets.map((dataset, index) => {
+          const style = VISUALIZATION_COLORS[index % VISUALIZATION_COLORS.length];
+
           return (
             <Grid key={dataset.zoneId} item xs={6}>
-              <div
-                style={{
-                  margin: "16px",
-                  borderRadius: "24px",
-                  backgroundColor: "#fff",
-                  minHeight: "48px",
-                  display: "flex",
-                  justifyContent: "center",
-                  flexDirection: "column",
-                  padding: "16px",
-                }}
-              >
+              <DisplayCard elevation={3} style={{ color: style.color }}>
                 <span style={{ fontSize: "24px", fontWeight: "bold" }}>{dataset.zoneName}</span>
                 <span style={{ fontSize: "18px" }}>
                   {dataset.populationData[dataset.populationData.length - 1].population}
                 </span>
-              </div>
+              </DisplayCard>
             </Grid>
           );
         })}

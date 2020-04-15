@@ -12,7 +12,7 @@ import {
 } from "@material-ui/core";
 
 import { Municipality } from "../../model/municipality";
-import Wrapper from "../wrapper/Wrapper";
+import Wrapper from "../layoutUtils/Wrapper";
 
 interface Props {
   municipalities: Municipality[];

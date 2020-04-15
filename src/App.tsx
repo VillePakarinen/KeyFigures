@@ -7,7 +7,7 @@ import { SnackbarProvider } from "notistack";
 import I18nProvider from "./i18n/I18nProvider";
 import { LOCALES } from "./i18n/locales";
 import ErrorBoundary from "./components/errorBoundary/ErrorBoundary";
-import theme from "./theme";
+import theme from "./style/theme";
 import { KeyFigureServiceProvider } from "./services/KeyFigureServiceProvider";
 import KeyFigurePage from "./pages/KeyFigurePage";
 
